@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Tokens Work — Why "test 123" Isn't So Simple</title>
+<style>
+  :root {
+    --bg: #0d0b1a;
+    --bg2: #151228;
+    --bg3: #1c1835;
+    --card: #1e1a33;
+    --border: #2d2654;
+    --text: #e8e4f0;
+    --text-dim: #9b93b4;
+    --purple: #a855f7;
+    --fuchsia: #d946ef;
+    --pink: #ec4899;
+    --cyan: #22d3ee;
+    --green: #34d399;
+    --orange: #fb923c;
+    --red: #f43f5e;
+    --yellow: #facc15;
+    --glow: 0 0 30px rgba(168, 85, 247, 0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* Animated background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(168,85,247,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(217,70,239,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 80%, rgba(34,211,238,0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ─── Header ─── */
+  header {
+    text-align: center;
+    padding: 3rem 0 2rem;
+  }
+
+  header .badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--purple), var(--fuchsia));
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 0.35rem 1rem;
+    border-radius: 100px;
+    margin-bottom: 1.25rem;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    background: linear-gradient(135deg, #e8e4f0, var(--purple), var(--fuchsia));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+    margin-bottom: 0.75rem;
+  }
+
+  header p {
+    color: var(--text-dim);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  header .subtitle-name {
+    color: var(--cyan);
+    font-weight: 600;
+  }
+
+  /* ─── Sections ─── */
+  section {
+    margin-bottom: 4rem;
+  }
+
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--fuchsia);
+    margin-bottom: 0.75rem;
+  }
+
+  .section-label::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--fuchsia), transparent);
+  }
+
+  h2 {
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+
+  h2 .accent { color: var(--purple); }
+
+  .section-intro {
+    color: var(--text-dim);
+    font-size: 1.05rem;
+    margin-bottom: 2rem;
+    max-width: 700px;
+  }
+
+  /* ─── Cards ─── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--purple), var(--fuchsia), var(--cyan));
+  }
+
+  /* ─── SECTION 1: Pipeline ─── */
+  .pipeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+  }
+
+  .pipeline-step {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+    position: relative;
+    padding-bottom: 1.5rem;
+  }
+
+  .pipeline-step:last-child { padding-bottom: 0; }
+
+  .step-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 44px;
+  }
+
+  .step-dot {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  .step-dot.send { background: rgba(34,211,238,0.15); color: var(--cyan); border: 2px solid var(--cyan); }
+  .step-dot.process { background: rgba(168,85,247,0.15); color: var(--purple); border: 2px solid var(--purple); }
+  .step-dot.bundle { background: rgba(217,70,239,0.15); color: var(--fuchsia); border: 2px solid var(--fuchsia); }
+  .step-dot.api { background: rgba(52,211,153,0.15); color: var(--green); border: 2px solid var(--green); }
+  .step-dot.response { background: rgba(250,204,21,0.15); color: var(--yellow); border: 2px solid var(--yellow); }
+
+  .step-connector {
+    width: 2px;
+    flex-grow: 1;
+    min-height: 20px;
+    background: var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .step-connector::after {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, transparent, var(--purple), transparent);
+    animation: flowDown 2s ease-in-out infinite;
+  }
+
+  @keyframes flowDown {
+    0% { top: -100%; }
+    100% { top: 200%; }
+  }
+
+  .step-content {
+    flex: 1;
+    padding-top: 0.5rem;
+  }
+
+  .step-content h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+  }
+
+  .step-content p {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+  }
+
+  /* ─── Token Package Visual ─── */
+  .package-visual {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 1.25rem;
+  }
+
+  .package-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .token-bar-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .token-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .token-bar .label {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    min-width: 140px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  .token-bar .bar-track {
+    flex: 1;
+    height: 28px;
+    background: var(--bg);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .token-bar .bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 8px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    animation: barGrow 1.5s ease-out both;
+  }
+
+  @keyframes barGrow {
+    from { width: 0 !important; }
+  }
+
+  .bar-fill.system {
+    background: linear-gradient(90deg, #7c3aed, var(--purple));
+    width: 60%;
+    animation-delay: 0.2s;
+  }
+  .bar-fill.workspace {
+    background: linear-gradient(90deg, #a21caf, var(--fuchsia));
+    width: 20%;
+    animation-delay: 0.4s;
+  }
+  .bar-fill.history {
+    background: linear-gradient(90deg, #0e7490, var(--cyan));
+    width: 18%;
+    animation-delay: 0.6s;
+  }
+  .bar-fill.message {
+    background: linear-gradient(90deg, #065f46, var(--green));
+    width: 0.5%;
+    min-width: 4px;
+    animation-delay: 0.8s;
+  }
+
+  .bar-fill .shimmer {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0% { left: -100%; }
+    50%, 100% { left: 200%; }
+  }
+
+  .token-bar .count {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    min-width: 80px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Total row */
+  .token-total {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .token-total .total-label {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+
+  .token-total .total-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--purple), var(--fuchsia));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .token-total .total-tiny {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    font-weight: 400;
+  }
+
+  /* Tiny message callout */
+  .tiny-callout {
+    background: rgba(34,211,238,0.08);
+    border: 1px solid rgba(34,211,238,0.2);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-top: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .tiny-callout .emoji { font-size: 1.75rem; flex-shrink: 0; }
+
+  .tiny-callout p {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+  }
+
+  .tiny-callout strong { color: var(--cyan); }
+
+  /* ─── SECTION 2: Analogy ─── */
+  .analogy-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (max-width: 600px) {
+    .analogy-grid { grid-template-columns: 1fr; }
+  }
+
+  .analogy-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .analogy-card .icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .analogy-card h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+
+  .analogy-card p {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .highlight-box {
+    background: rgba(168,85,247,0.08);
+    border: 1px solid rgba(168,85,247,0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .highlight-box .hb-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+
+  .highlight-box h4 {
+    color: var(--purple);
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .highlight-box p {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+  }
+
+  /* ─── SECTION 3: Multiple Chats ─── */
+  .chats-visual {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 550px) {
+    .chats-visual { grid-template-columns: 1fr; }
+  }
+
+  .chat-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .chat-card::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+  }
+
+  .chat-card.c1::after { background: var(--purple); }
+  .chat-card.c2::after { background: var(--fuchsia); }
+  .chat-card.c3::after { background: var(--cyan); }
+  .chat-card.c4::after { background: var(--pink); }
+
+  .chat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .c1 .chat-icon { background: rgba(168,85,247,0.15); }
+  .c2 .chat-icon { background: rgba(217,70,239,0.15); }
+  .c3 .chat-icon { background: rgba(34,211,238,0.15); }
+  .c4 .chat-icon { background: rgba(236,72,153,0.15); }
+
+  .chat-info { flex: 1; }
+
+  .chat-info .chat-name {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.15rem;
+  }
+
+  .chat-info .chat-msg {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+  }
+
+  .chat-tokens {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--orange);
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+
+  /* Animated tokens flying */
+  .token-stream {
+    position: relative;
+    height: 50px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .token-stream .stream-text {
+    position: relative;
+    z-index: 2;
+    font-size: 1.1rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--orange), var(--red));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .token-stream .particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    opacity: 0.5;
+    animation: particleFlow 2s linear infinite;
+  }
+
+  .token-stream .particle:nth-child(1) { background: var(--purple); left: 0%; animation-delay: 0s; top: 30%; }
+  .token-stream .particle:nth-child(2) { background: var(--fuchsia); left: -10%; animation-delay: 0.3s; top: 60%; }
+  .token-stream .particle:nth-child(3) { background: var(--cyan); left: -20%; animation-delay: 0.6s; top: 20%; }
+  .token-stream .particle:nth-child(4) { background: var(--pink); left: -30%; animation-delay: 0.9s; top: 70%; }
+  .token-stream .particle:nth-child(5) { background: var(--green); left: -5%; animation-delay: 1.2s; top: 45%; }
+  .token-stream .particle:nth-child(6) { background: var(--yellow); left: -15%; animation-delay: 1.5s; top: 15%; }
+  .token-stream .particle:nth-child(7) { background: var(--orange); left: -25%; animation-delay: 1.8s; top: 80%; }
+
+  @keyframes particleFlow {
+    0% { transform: translateX(0); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.6; }
+    100% { transform: translateX(calc(900px + 100%)); opacity: 0; }
+  }
+
+  /* Rate limit bars */
+  .rate-limits {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .rate-row {
+    position: relative;
+  }
+
+  .rate-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.4rem;
+  }
+
+  .rate-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .rate-value {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rate-track {
+    height: 36px;
+    background: var(--bg);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .rate-fill {
+    height: 100%;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    padding-left: 12px;
+    animation: rateGrow 2s ease-out both;
+  }
+
+  @keyframes rateGrow {
+    from { width: 0 !important; }
+  }
+
+  .rate-fill.over {
+    animation: rateGrow 2s ease-out both, overPulse 2s ease-in-out infinite 2s;
+  }
+
+  @keyframes overPulse {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.3); }
+  }
+
+  .rate-usage {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    background: white;
+    opacity: 0.6;
+    box-shadow: 0 0 8px rgba(255,255,255,0.5);
+    z-index: 3;
+  }
+
+  .rate-status {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    position: relative;
+    z-index: 2;
+  }
+
+  .rate-fill .shimmer2 {
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 150%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+    animation: shimmer2 4s ease-in-out infinite;
+  }
+
+  @keyframes shimmer2 {
+    0% { left: -150%; }
+    50%, 100% { left: 200%; }
+  }
+
+  /* Overflow indicator */
+  .rate-overflow {
+    position: absolute;
+    right: -2px;
+    top: -4px;
+    bottom: -4px;
+    display: flex;
+    align-items: center;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 0 6px;
+    border-radius: 4px;
+    animation: overflowBlink 1.5s ease-in-out infinite;
+    z-index: 5;
+  }
+
+  @keyframes overflowBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* ─── SECTION 4: Tips ─── */
+  .tips-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (max-width: 600px) {
+    .tips-grid { grid-template-columns: 1fr; }
+  }
+
+  .tip-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+
+  .tip-card:hover {
+    border-color: var(--purple);
+    transform: translateY(-2px);
+  }
+
+  .tip-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .tip-card:nth-child(1) .tip-icon { background: rgba(34,211,238,0.12); }
+  .tip-card:nth-child(2) .tip-icon { background: rgba(52,211,153,0.12); }
+  .tip-card:nth-child(3) .tip-icon { background: rgba(168,85,247,0.12); }
+  .tip-card:nth-child(4) .tip-icon { background: rgba(217,70,239,0.12); }
+
+  .tip-card h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+
+  .tip-card p {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .tip-card code {
+    background: rgba(168,85,247,0.15);
+    color: var(--purple);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  /* ─── Envelope visual ─── */
+  .envelope-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 2rem 0;
+    position: relative;
+  }
+
+  .envelope {
+    width: 280px;
+    height: 180px;
+    background: linear-gradient(135deg, var(--bg3), var(--card));
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--glow);
+  }
+
+  .envelope::before {
+    content: '📦';
+    position: absolute;
+    top: -18px;
+    right: -10px;
+    font-size: 2rem;
+    animation: envelopeBob 3s ease-in-out infinite;
+  }
+
+  @keyframes envelopeBob {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-5px) rotate(3deg); }
+  }
+
+  .envelope-layers {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    width: 220px;
+  }
+
+  .env-layer {
+    height: auto;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 10px;
+    font-size: 0.6rem;
+    font-weight: 600;
+    animation: layerSlideIn 0.8s ease-out both;
+  }
+
+  .env-layer:nth-child(1) { background: rgba(124,58,237,0.4); border: 1px solid rgba(124,58,237,0.5); animation-delay: 0.2s; padding: 10px; }
+  .env-layer:nth-child(2) { background: rgba(162,28,175,0.3); border: 1px solid rgba(162,28,175,0.4); animation-delay: 0.4s; padding: 6px 10px; }
+  .env-layer:nth-child(3) { background: rgba(14,116,144,0.3); border: 1px solid rgba(14,116,144,0.4); animation-delay: 0.6s; padding: 8px 10px; }
+  .env-layer:nth-child(4) { background: rgba(6,95,70,0.4); border: 1px solid rgba(6,95,70,0.5); animation-delay: 0.8s; padding: 2px 10px; min-height: 8px; }
+
+  .env-layer span:last-child { opacity: 0.7; }
+
+  @keyframes layerSlideIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .envelope-arrow {
+    margin: 1rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--text-dim);
+    font-size: 0.75rem;
+  }
+
+  .envelope-arrow .arrow-line {
+    width: 2px;
+    height: 30px;
+    background: linear-gradient(180deg, var(--purple), var(--fuchsia));
+    position: relative;
+  }
+
+  .envelope-arrow .arrow-line::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid var(--fuchsia);
+  }
+
+  /* ─── Footer ─── */
+  footer {
+    text-align: center;
+    padding: 3rem 0 2rem;
+    border-top: 1px solid var(--border);
+    margin-top: 2rem;
+  }
+
+  footer p {
+    color: var(--text-dim);
+    font-size: 0.8rem;
+  }
+
+  footer a {
+    color: var(--purple);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+
+  footer a:hover { color: var(--fuchsia); }
+
+  /* ─── Responsive ─── */
+  @media (max-width: 600px) {
+    .container { padding: 1rem; }
+    .card { padding: 1.25rem; }
+    .token-bar .label { min-width: 90px; font-size: 0.7rem; }
+    .token-bar .count { min-width: 60px; font-size: 0.65rem; }
+    header { padding: 2rem 0 1.5rem; }
+    .envelope { width: 240px; height: 160px; }
+    .envelope-layers { width: 190px; }
+  }
+
+  /* ─── Scroll animations ─── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Comparison arrow */
+  .comparison {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+  }
+
+  .comp-box {
+    padding: 0.75rem 1.25rem;
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  .comp-box.small {
+    background: rgba(34,211,238,0.1);
+    border: 1px solid rgba(34,211,238,0.25);
+  }
+
+  .comp-box.big {
+    background: rgba(217,70,239,0.1);
+    border: 1px solid rgba(217,70,239,0.25);
+  }
+
+  .comp-box .comp-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+  }
+
+  .comp-box.small .comp-value { color: var(--cyan); }
+  .comp-box.big .comp-value { color: var(--fuchsia); }
+
+  .comp-box .comp-label {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .comp-arrow {
+    font-size: 1.5rem;
+    color: var(--text-dim);
+  }
+
+  /* Animated growing conversation */
+  .conv-growth {
+    margin-top: 1.25rem;
+  }
+
+  .conv-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .conv-row .conv-label {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    min-width: 120px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .conv-row .conv-track {
+    flex: 1;
+    height: 20px;
+    background: var(--bg);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .conv-row .conv-fill {
+    height: 100%;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 6px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.8);
+  }
+
+  .conv-row:nth-child(1) .conv-fill { background: linear-gradient(90deg, #1e1b4b, var(--purple)); width: 10%; }
+  .conv-row:nth-child(2) .conv-fill { background: linear-gradient(90deg, #1e1b4b, var(--purple)); width: 25%; }
+  .conv-row:nth-child(3) .conv-fill { background: linear-gradient(90deg, #1e1b4b, var(--fuchsia)); width: 50%; }
+  .conv-row:nth-child(4) .conv-fill { background: linear-gradient(90deg, #581c87, var(--red)); width: 85%; }
+  .conv-row:nth-child(5) .conv-fill { background: linear-gradient(90deg, #7f1d1d, var(--red)); width: 100%; }
+
+  .conv-row .conv-tokens {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    min-width: 65px;
+    font-variant-numeric: tabular-nums;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ═══════════ HEADER ═══════════ -->
+  <header>
+    <div class="badge">Visual Explainer</div>
+    <h1>How Tokens Work</h1>
+    <p>Why sending <span class="subtitle-name">"test 123"</span> to Vishnu isn't as simple as it looks — and what that means for rate limits.</p>
+  </header>
+
+  <!-- ═══════════ SECTION 1 ═══════════ -->
+  <section class="fade-in">
+    <div class="section-label">Section 1</div>
+    <h2>What happens when you <span class="accent">send a message</span></h2>
+    <p class="section-intro">You type a tiny message. Behind the scenes, something much bigger gets assembled and sent to the AI.</p>
+
+    <div class="card">
+      <div class="pipeline">
+
+        <!-- Step 1 -->
+        <div class="pipeline-step">
+          <div class="step-line">
+            <div class="step-dot send">1</div>
+            <div class="step-connector"></div>
+          </div>
+          <div class="step-content">
+            <h3>💬 You type "test 123" in Telegram</h3>
+            <p>Your message is tiny — just <strong style="color:var(--cyan)">3 tokens</strong>. Practically nothing.</p>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="pipeline-step">
+          <div class="step-line">
+            <div class="step-dot process">2</div>
+            <div class="step-connector"></div>
+          </div>
+          <div class="step-content">
+            <h3>⚙️ Clawdbot receives it &amp; builds the request</h3>
+            <p>Before your message reaches the AI, Clawdbot has to package everything Vishnu needs to understand who he is, what he's doing, and what you've been talking about.</p>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="pipeline-step">
+          <div class="step-line">
+            <div class="step-dot bundle">3</div>
+            <div class="step-connector"></div>
+          </div>
+          <div class="step-content">
+            <h3>📦 The request bundles everything together</h3>
+            <p>Your 3-token message gets wrapped in a massive context package:</p>
+
+            <div class="package-visual">
+              <div class="package-label">What's actually sent to the AI</div>
+              <div class="token-bar-group">
+                <div class="token-bar">
+                  <span class="label">System prompt</span>
+                  <div class="bar-track">
+                    <div class="bar-fill system">
+                      <span class="shimmer"></span>
+                    </div>
+                  </div>
+                  <span class="count">~15,000 tk</span>
+                </div>
+                <div class="token-bar">
+                  <span class="label">Workspace files</span>
+                  <div class="bar-track">
+                    <div class="bar-fill workspace">
+                      <span class="shimmer"></span>
+                    </div>
+                  </div>
+                  <span class="count">~5,000 tk</span>
+                </div>
+                <div class="token-bar">
+                  <span class="label">Chat history</span>
+                  <div class="bar-track">
+                    <div class="bar-fill history">
+                      <span class="shimmer"></span>
+                    </div>
+                  </div>
+                  <span class="count">~2,000–50,000 tk</span>
+                </div>
+                <div class="token-bar">
+                  <span class="label" style="color:var(--cyan)">Your message</span>
+                  <div class="bar-track">
+                    <div class="bar-fill message">
+                      <span class="shimmer"></span>
+                    </div>
+                  </div>
+                  <span class="count" style="color:var(--cyan)">3 tk</span>
+                </div>
+              </div>
+              <div class="token-total">
+                <span class="total-label">Total sent per message</span>
+                <span class="total-value">~22,000+ <span class="total-tiny">tokens</span></span>
+              </div>
+            </div>
+
+            <!-- Envelope Visual -->
+            <div class="envelope-wrapper">
+              <div style="font-size:0.75rem; color:var(--text-dim); margin-bottom:0.5rem; text-align:center;">Your tiny message, packaged up:</div>
+              <div class="envelope">
+                <div class="envelope-layers">
+                  <div class="env-layer"><span>System Prompt</span><span>15,000 tk</span></div>
+                  <div class="env-layer"><span>Workspace Files</span><span>5,000 tk</span></div>
+                  <div class="env-layer"><span>Conversation History</span><span>2,000+ tk</span></div>
+                  <div class="env-layer"><span style="font-size:0.5rem;">"test 123"</span><span>3 tk</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="pipeline-step">
+          <div class="step-line">
+            <div class="step-dot api">4</div>
+            <div class="step-connector"></div>
+          </div>
+          <div class="step-content">
+            <h3>🚀 Sent to Anthropic's API as ONE request</h3>
+            <p>The entire package — all 22,000+ tokens — gets sent in a single API call. Anthropic sees the full payload, not just your message.</p>
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="pipeline-step">
+          <div class="step-line">
+            <div class="step-dot response">5</div>
+          </div>
+          <div class="step-content">
+            <h3>✨ Vishnu responds</h3>
+            <p>Anthropic processes everything and sends back a response of <strong style="color:var(--yellow)">~500–2,000 tokens</strong>.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Comparison callout -->
+      <div class="tiny-callout">
+        <div class="emoji">🔍</div>
+        <p>Your <strong>"test 123"</strong> was 3 tokens. But the total request was <strong>22,000+</strong> tokens. That's like writing a 3-word post-it note, but delivering it inside a <strong>60-page binder</strong>.</p>
+      </div>
+
+      <div class="comparison">
+        <div class="comp-box small">
+          <div class="comp-value">3</div>
+          <div class="comp-label">Your message</div>
+        </div>
+        <div class="comp-arrow">→</div>
+        <div class="comp-box big">
+          <div class="comp-value">22,003+</div>
+          <div class="comp-label">What's actually sent</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════ SECTION 2 ═══════════ -->
+  <section class="fade-in">
+    <div class="section-label">Section 2</div>
+    <h2>Why does it need <span class="accent">all that context?</span></h2>
+    <p class="section-intro">The AI doesn't remember anything between messages. Every single time you send a message, the entire context must be re-sent from scratch.</p>
+
+    <div class="analogy-grid">
+      <div class="analogy-card">
+        <div class="icon">🧠</div>
+        <h4>No Memory Between Calls</h4>
+        <p>The AI is completely blank every time. It's like calling a brand new employee for each message — they know nothing.</p>
+      </div>
+      <div class="analogy-card">
+        <div class="icon">📋</div>
+        <h4>The Training Manual</h4>
+        <p>SOUL.md, AGENTS.md, USER.md, etc. are like the employee's training manual. Sent every single time, so Vishnu knows who he is.</p>
+      </div>
+      <div class="analogy-card">
+        <div class="icon">📜</div>
+        <h4>Reading Back the Transcript</h4>
+        <p>The conversation history is like reading back the entire chat from the beginning — every message you've ever sent in this session.</p>
+      </div>
+      <div class="analogy-card">
+        <div class="icon">📞</div>
+        <h4>The Phone Call Analogy</h4>
+        <p>Imagine calling a help desk where they never remember you. Each call: "Hi, my name is..., I'm working on..., we last discussed..."</p>
+      </div>
+    </div>
+
+    <div class="highlight-box">
+      <div class="hb-icon">📈</div>
+      <h4>Conversations grow over time</h4>
+      <p>As you chat more, the conversation history grows. What starts as a 22K token request can balloon to 50K, 70K, or even more — because every previous message is included.</p>
+      <div class="conv-growth">
+        <div class="conv-row">
+          <span class="conv-label">Message 1</span>
+          <div class="conv-track"><div class="conv-fill">22K</div></div>
+          <span class="conv-tokens">22,000 tk</span>
+        </div>
+        <div class="conv-row">
+          <span class="conv-label">Message 10</span>
+          <div class="conv-track"><div class="conv-fill">28K</div></div>
+          <span class="conv-tokens">28,000 tk</span>
+        </div>
+        <div class="conv-row">
+          <span class="conv-label">Message 30</span>
+          <div class="conv-track"><div class="conv-fill">42K</div></div>
+          <span class="conv-tokens">42,000 tk</span>
+        </div>
+        <div class="conv-row">
+          <span class="conv-label">Message 60</span>
+          <div class="conv-track"><div class="conv-fill">65K</div></div>
+          <span class="conv-tokens">65,000 tk</span>
+        </div>
+        <div class="conv-row">
+          <span class="conv-label">Message 100+</span>
+          <div class="conv-track"><div class="conv-fill">90K+</div></div>
+          <span class="conv-tokens">90,000+ tk</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ SECTION 3 ═══════════ -->
+  <section class="fade-in">
+    <div class="section-label">Section 3</div>
+    <h2>What happens with <span class="accent">multiple chats</span></h2>
+    <p class="section-intro">When several group chats fire messages at the same time, the tokens stack up fast — and can blow past rate limits in seconds.</p>
+
+    <div class="card">
+      <div class="chats-visual">
+        <div class="chat-card c1">
+          <div class="chat-icon">👥</div>
+          <div class="chat-info">
+            <div class="chat-name">Group Chat 1</div>
+            <div class="chat-msg">"test 123"</div>
+          </div>
+          <div class="chat-tokens">25,000 tk</div>
+        </div>
+        <div class="chat-card c2">
+          <div class="chat-icon">👥</div>
+          <div class="chat-info">
+            <div class="chat-name">Group Chat 2</div>
+            <div class="chat-msg">"hello"</div>
+          </div>
+          <div class="chat-tokens">25,000 tk</div>
+        </div>
+        <div class="chat-card c3">
+          <div class="chat-icon">👥</div>
+          <div class="chat-info">
+            <div class="chat-name">Group Chat 3</div>
+            <div class="chat-msg">"testing"</div>
+          </div>
+          <div class="chat-tokens">25,000 tk</div>
+        </div>
+        <div class="chat-card c4">
+          <div class="chat-icon">💬</div>
+          <div class="chat-info">
+            <div class="chat-name">Direct Message</div>
+            <div class="chat-msg">"hi"</div>
+          </div>
+          <div class="chat-tokens">20,000 tk</div>
+        </div>
+      </div>
+
+      <!-- Token stream animation -->
+      <div class="token-stream">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <span class="stream-text">⚡ ~95,000 tokens in seconds</span>
+      </div>
+
+      <!-- Rate limit comparison -->
+      <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.15em; color:var(--text-dim); margin-bottom:1rem; font-weight:600;">How that compares to rate limits</div>
+
+      <div class="rate-limits">
+
+        <!-- Free tier -->
+        <div class="rate-row">
+          <div class="rate-header">
+            <span class="rate-name" style="color:var(--red)">Free Tier</span>
+            <span class="rate-value">40,000 tokens/min limit</span>
+          </div>
+          <div class="rate-track">
+            <div class="rate-fill over" style="width:100%; background: linear-gradient(90deg, rgba(244,63,94,0.3), rgba(244,63,94,0.6));">
+              <span class="shimmer2"></span>
+              <span class="rate-status" style="color:var(--red)">237% OVER — BLOCKED ✕</span>
+            </div>
+            <div class="rate-usage" style="left:42%;"></div>
+          </div>
+        </div>
+
+        <!-- Paid tier 1 -->
+        <div class="rate-row">
+          <div class="rate-header">
+            <span class="rate-name" style="color:var(--orange)">Paid Tier 1</span>
+            <span class="rate-value">80,000 tokens/min limit</span>
+          </div>
+          <div class="rate-track">
+            <div class="rate-fill over" style="width:100%; background: linear-gradient(90deg, rgba(251,146,60,0.3), rgba(251,146,60,0.5));">
+              <span class="shimmer2"></span>
+              <span class="rate-status" style="color:var(--orange)">119% OVER — BLOCKED ✕</span>
+            </div>
+            <div class="rate-usage" style="left:84%;"></div>
+          </div>
+        </div>
+
+        <!-- Paid tier 2 -->
+        <div class="rate-row">
+          <div class="rate-header">
+            <span class="rate-name" style="color:var(--green)">Paid Tier 2</span>
+            <span class="rate-value">160,000 tokens/min limit</span>
+          </div>
+          <div class="rate-track">
+            <div class="rate-fill" style="width:59%; background: linear-gradient(90deg, rgba(52,211,153,0.25), rgba(52,211,153,0.45)); animation-delay: 0.6s;">
+              <span class="shimmer2"></span>
+              <span class="rate-status" style="color:var(--green)">59% — OK ✓</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="tiny-callout" style="margin-top:1.5rem; background:rgba(244,63,94,0.08); border-color:rgba(244,63,94,0.2);">
+        <div class="emoji">⚠️</div>
+        <p>Four simple messages — <strong style="color:var(--red)">"test 123", "hello", "testing", "hi"</strong> — fired at the same time can exceed your rate limit and cause Vishnu to stop responding until the limit resets.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ SECTION 4 ═══════════ -->
+  <section class="fade-in">
+    <div class="section-label">Section 4</div>
+    <h2>How to <span class="accent">avoid rate limits</span></h2>
+    <p class="section-intro">A few simple habits can keep Vishnu running smoothly without hitting walls.</p>
+
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-icon">⏱️</div>
+        <h4>Space out your messages</h4>
+        <p>Don't fire messages in all groups at once. Give Vishnu a few seconds between messages so they don't all hit the API simultaneously.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">📈</div>
+        <h4>Upgrade your Anthropic tier</h4>
+        <p>Higher plan tiers give you more tokens per minute. Tier 2 (160K/min) gives 4× the room compared to free (40K/min).</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🔄</div>
+        <h4>Use <code>/reset</code> regularly</h4>
+        <p>This clears the conversation history, shrinking the token payload back down. Great after long sessions.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🚦</div>
+        <h4>Throttle concurrency</h4>
+        <p>We can configure Vishnu to process one message at a time instead of all at once — avoiding token spikes.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <footer>
+    <p>Created by <a href="https://openclawinstall.net" target="_blank">OpenClaw Install</a> — openclawinstall.net</p>
+  </footer>
+
+</div>
+
+<script>
+  // Intersection Observer for scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
