@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Molty Bot — System Overview & Status</title>
+<style>
+  /* ─── Reset & Base ─── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: #e8e6e3;
+    background: #0f0f14;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── Nav ─── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(15,15,20,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 0 24px;
+  }
+  nav .nav-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  nav .brand {
+    font-weight: 700; font-size: 1.1rem; color: #60a5fa;
+    letter-spacing: -0.02em;
+  }
+  nav .brand span { color: #6b7280; font-weight: 400; }
+  nav ul { list-style: none; display: flex; gap: 6px; flex-wrap: wrap; }
+  nav ul li a {
+    text-decoration: none; color: #9ca3af; font-size: 0.85rem; font-weight: 500;
+    padding: 6px 12px; border-radius: 8px; transition: all 0.2s;
+  }
+  nav ul li a:hover { background: rgba(96,165,250,0.1); color: #60a5fa; }
+  .menu-toggle { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #9ca3af; }
+
+  /* ─── Hero ─── */
+  .hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #0f172a 100%);
+    padding: 100px 24px 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 30% 20%, rgba(96,165,250,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(139,92,246,0.06) 0%, transparent 50%);
+  }
+  .hero-content { position: relative; max-width: 720px; margin: 0 auto; }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(96,165,250,0.12); color: #60a5fa;
+    font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 6px 16px; border-radius: 100px; margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800; color: #f1f5f9;
+    line-height: 1.15; letter-spacing: -0.03em;
+    margin-bottom: 16px;
+  }
+  .hero h1 em { font-style: normal; color: #60a5fa; }
+  .hero p {
+    font-size: 1.15rem; color: #94a3b8; max-width: 540px; margin: 0 auto 32px;
+  }
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #2563eb; color: #fff;
+    padding: 14px 32px; border-radius: 12px;
+    text-decoration: none; font-weight: 600; font-size: 1rem;
+    transition: all 0.25s; box-shadow: 0 4px 14px rgba(37,99,235,0.3);
+  }
+  .hero-cta:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,99,235,0.35); }
+
+  /* ─── Sections ─── */
+  section { padding: 80px 24px; }
+  .container { max-width: 900px; margin: 0 auto; }
+  .section-label {
+    display: inline-block;
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+    color: #60a5fa; margin-bottom: 8px;
+  }
+  .section-title {
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+    font-weight: 800; color: #f1f5f9; letter-spacing: -0.02em;
+    margin-bottom: 12px; line-height: 1.2;
+  }
+  .section-subtitle {
+    font-size: 1.05rem; color: #94a3b8; margin-bottom: 40px; max-width: 600px;
+  }
+  .alt-bg { background: #141420; }
+
+  /* ─── Feature Cards ─── */
+  .features-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px; margin-top: 32px;
+  }
+  .feature-card {
+    background: #1a1a28; border: 1px solid #2a2a3a;
+    border-radius: 16px; padding: 28px 24px;
+    transition: all 0.25s;
+  }
+  .feature-card:hover { border-color: rgba(96,165,250,0.3); box-shadow: 0 8px 30px rgba(96,165,250,0.06); transform: translateY(-2px); }
+  .feature-icon {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, rgba(96,165,250,0.15), rgba(139,92,246,0.15));
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; margin-bottom: 16px;
+  }
+  .feature-card h3 { font-size: 1.05rem; font-weight: 700; color: #f1f5f9; margin-bottom: 8px; }
+  .feature-card p { font-size: 0.92rem; color: #94a3b8; line-height: 1.6; }
+
+  /* ─── Info Boxes ─── */
+  .info-box {
+    background: #1a1a28; border: 1px solid #2a2a3a;
+    border-radius: 12px; padding: 2rem; margin: 1.5rem 0;
+  }
+  .info-box h3 { font-size: 1.2rem; margin-bottom: 1rem; }
+  .info-box p { font-size: 0.92rem; color: #94a3b8; line-height: 1.7; margin-bottom: 0.75rem; }
+  .info-box p:last-child { margin-bottom: 0; }
+
+  /* ─── Status Cards ─── */
+  .status-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px; margin-top: 32px;
+  }
+  .status-card {
+    background: #1a1a28; border: 1px solid #2a2a3a; border-radius: 14px; padding: 24px;
+    text-align: center;
+  }
+  .status-card .status-icon { font-size: 2rem; margin-bottom: 12px; }
+  .status-card h4 { font-weight: 700; color: #f1f5f9; margin-bottom: 6px; }
+  .status-card p { font-size: 0.88rem; color: #94a3b8; }
+  .status-card .status-value {
+    font-size: 1.4rem; font-weight: 800; color: #60a5fa;
+    display: block; margin-top: 8px;
+  }
+
+  /* ─── Flow Diagrams ─── */
+  .flow-step {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; border-radius: 10px; margin-bottom: 8px;
+  }
+  .flow-step span.icon { font-size: 1.2rem; flex-shrink: 0; }
+  .flow-step strong { font-size: 0.9rem; color: #f1f5f9; }
+  .flow-step p { font-size: 0.82rem; color: #94a3b8; margin-top: 2px; }
+  .flow-arrow { text-align: center; color: #4b5563; font-size: 1rem; margin: 4px 0; }
+
+  /* ─── Tables ─── */
+  .config-table { width: 100%; border-collapse: collapse; margin-top: 24px; }
+  .config-table th, .config-table td { text-align: left; padding: 14px 16px; }
+  .config-table th {
+    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;
+    color: #6b7280; font-weight: 600; border-bottom: 2px solid #2a2a3a;
+  }
+  .config-table td { border-bottom: 1px solid #1e1e2e; font-size: 0.92rem; color: #94a3b8; }
+  .config-table code {
+    background: rgba(96,165,250,0.1); color: #60a5fa;
+    padding: 3px 10px; border-radius: 6px;
+    font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.88rem; font-weight: 600;
+  }
+
+  /* ─── FAQ ─── */
+  .faq-list { margin-top: 32px; }
+  .faq-item {
+    border: 1px solid #2a2a3a; border-radius: 14px;
+    margin-bottom: 12px; overflow: hidden;
+    background: #1a1a28;
+  }
+  .faq-item summary {
+    padding: 20px 24px;
+    font-weight: 700; font-size: 1rem; color: #f1f5f9;
+    cursor: pointer; list-style: none;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.2s;
+  }
+  .faq-item summary:hover { background: rgba(96,165,250,0.05); }
+  .faq-item summary::after {
+    content: '+'; font-size: 1.4rem; color: #60a5fa; font-weight: 300;
+    transition: transform 0.25s;
+  }
+  .faq-item[open] summary::after { content: '−'; }
+  .faq-item .faq-body { padding: 0 24px 20px; font-size: 0.94rem; color: #94a3b8; line-height: 1.7; }
+
+  /* ─── Footer ─── */
+  footer {
+    background: #0a0a0f; color: #6b7280;
+    padding: 48px 24px; text-align: center;
+    border-top: 1px solid #1e1e2e;
+  }
+  footer .footer-brand { font-size: 1.1rem; font-weight: 700; color: #60a5fa; margin-bottom: 8px; }
+  footer p { font-size: 0.88rem; margin-bottom: 6px; }
+  footer a { color: #60a5fa; text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  footer .footer-divider { width: 60px; height: 2px; background: #2a2a3a; margin: 20px auto; border-radius: 2px; }
+  footer .footer-note { font-size: 0.8rem; color: #4b5563; }
+
+  /* ─── Accent classes ─── */
+  .accent-blue { border-color: #2563eb !important; }
+  .accent-purple { border-color: #7c3aed !important; }
+  .accent-green { border-color: #059669 !important; }
+  .accent-amber { border-color: #d97706 !important; }
+  .accent-cyan { border-color: #06b6d4 !important; }
+
+  /* ─── Responsive ─── */
+  @media (max-width: 768px) {
+    nav ul { display: none; }
+    nav ul.open {
+      display: flex; flex-direction: column;
+      position: absolute; top: 64px; left: 0; right: 0;
+      background: rgba(15,15,20,0.97);
+      backdrop-filter: blur(12px);
+      padding: 16px 24px; gap: 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .menu-toggle { display: block; }
+    .hero { padding: 72px 20px 60px; }
+    section { padding: 56px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── Navigation ─── -->
+<nav>
+  <div class="nav-inner">
+    <div class="brand">🔧 Molty <span>— System Overview</span></div>
+    <button class="menu-toggle" onclick="document.querySelector('nav ul').classList.toggle('open')" aria-label="Menu">☰</button>
+    <ul>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#models">Models</a></li>
+      <li><a href="#rate-limiting">Rate Limiting</a></li>
+      <li><a href="#smart-queue">Smart Queue</a></li>
+      <li><a href="#agents">Agents</a></li>
+      <li><a href="#channels">Channels</a></li>
+      <li><a href="#memory">Memory</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#config">Config</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ─── Hero ─── -->
+<header class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">OpenClaw Install — Internal</div>
+    <h1>🔧 <em>Molty Bot</em> — System Overview</h1>
+    <p>Ryan's AI employee. Runs 24/7. Ships while you sleep. This page documents everything about the Molty installation — architecture, config, capabilities, and status.</p>
+    <a href="https://t.me/MoltyBot" class="hero-cta" target="_blank">💬 Open Molty in Telegram</a>
+  </div>
+</header>
+
+<!-- ─── Overview ─── -->
+<section id="overview">
+  <div class="container">
+    <span class="section-label">System Overview</span>
+    <h2 class="section-title">What is Molty?</h2>
+    <p class="section-subtitle">The AI employee that never clocks out — Ryan's personal assistant, developer, and business operator.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🧠</div>
+        <h3>Claude Opus 4.5</h3>
+        <p>Primary brain — Anthropic's most capable model. Deep reasoning, expert coding, nuanced conversation. Falls back through Sonnet → Haiku → GPT 5.2.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏗️</div>
+        <h3>Builds While You Sleep</h3>
+        <p>Creates PRs, builds websites, deploys to Cloudflare, manages GitHub repos. Never pushes live — always branches and PRs for review.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💬</div>
+        <h3>Always On Telegram</h3>
+        <p>DMs, group chats, inline buttons. Streams responses in real-time. Handles images, files, voice messages.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔄</div>
+        <h3>Self-Managing</h3>
+        <p>Heartbeats, proactive monitoring, adaptive rate limiting, memory maintenance. Manages itself so you don't have to.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Architecture ─── -->
+<section id="architecture" class="alt-bg">
+  <div class="container">
+    <span class="section-label">Architecture</span>
+    <h2 class="section-title">How Molty is built</h2>
+    <p class="section-subtitle">Clawdbot gateway running on Ryan's Mac, connected to Telegram, with full filesystem and tool access.</p>
+
+    <div class="status-grid">
+      <div class="status-card">
+        <div class="status-icon">🖥️</div>
+        <h4>Runtime</h4>
+        <p>Clawdbot Gateway</p>
+        <span class="status-value">v2026.1.24</span>
+      </div>
+      <div class="status-card">
+        <div class="status-icon">🟢</div>
+        <h4>Platform</h4>
+        <p>macOS (Darwin x64)</p>
+        <span class="status-value">Node v22</span>
+      </div>
+      <div class="status-card">
+        <div class="status-icon">🔒</div>
+        <h4>Gateway</h4>
+        <p>Local mode, loopback</p>
+        <span class="status-value">Port 18789</span>
+      </div>
+      <div class="status-card">
+        <div class="status-icon">📂</div>
+        <h4>Workspace</h4>
+        <p>Main agent workspace</p>
+        <span class="status-value">/clawd-main</span>
+      </div>
+    </div>
+
+    <div class="info-box" style="margin-top:2rem;">
+      <h3 style="color:#60a5fa;">📡 Connection Stack</h3>
+      <p><strong>Telegram → Clawdbot Gateway → Claude API → Tools (exec, browser, web, files, cron, memory)</strong></p>
+      <p>Messages arrive via Telegram long-polling, get processed by the gateway which manages sessions, routes to the right agent, calls the AI model, executes tool calls, and streams the response back. The gateway handles auth, rate limiting, model fallbacks, and session persistence automatically.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Models ─── -->
+<section id="models">
+  <div class="container">
+    <span class="section-label">Model Configuration</span>
+    <h2 class="section-title">AI models & fallback chain</h2>
+    <p class="section-subtitle">Multi-model setup with automatic failover for maximum reliability.</p>
+
+    <div class="info-box accent-blue" style="border-width:2px;">
+      <h3 style="color:#60a5fa;">🔗 Model Fallback Chain</h3>
+      <p style="margin-bottom:1.5rem;">When the primary model hits a rate limit (429), Molty automatically falls to the next model in the chain. Cooldown is exponential — retries the primary after increasing intervals.</p>
+
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="flow-step" style="background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.2);">
+          <span class="icon">🧠</span>
+          <div>
+            <strong>1. Claude Opus 4.5</strong> <span style="color:#60a5fa;font-size:0.8rem;font-weight:600;">PRIMARY</span>
+            <p>Most capable model. Deep reasoning, complex coding, long context. ~$15/MTok input, $75/MTok output.</p>
+          </div>
+        </div>
+        <div class="flow-arrow">↓ <span style="font-size:0.75rem;color:#6b7280;">if rate limited</span></div>
+        <div class="flow-step" style="background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.2);">
+          <span class="icon">⚡</span>
+          <div>
+            <strong>2. Claude Sonnet 4</strong> <span style="color:#8b5cf6;font-size:0.8rem;font-weight:600;">FALLBACK 1</span>
+            <p>Smart and fast. Great for most tasks. ~$3/MTok input, $15/MTok output. 5x cheaper than Opus.</p>
+          </div>
+        </div>
+        <div class="flow-arrow">↓ <span style="font-size:0.75rem;color:#6b7280;">if rate limited</span></div>
+        <div class="flow-step" style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.2);">
+          <span class="icon">💨</span>
+          <div>
+            <strong>3. Claude Haiku 3.5</strong> <span style="color:#06b6d4;font-size:0.8rem;font-weight:600;">FALLBACK 2</span>
+            <p>Lightweight and fast. Much higher rate limits. ~$0.25/MTok input, $1.25/MTok output.</p>
+          </div>
+        </div>
+        <div class="flow-arrow">↓ <span style="font-size:0.75rem;color:#6b7280;">if rate limited</span></div>
+        <div class="flow-step" style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);">
+          <span class="icon">🌐</span>
+          <div>
+            <strong>4. GPT 5.2 (OpenAI Codex)</strong> <span style="color:#10b981;font-size:0.8rem;font-weight:600;">FALLBACK 3</span>
+            <p>Different provider entirely. If all Anthropic models are limited, falls to OpenAI. Never fully stops.</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:1rem;margin-top:1.5rem;">
+        <strong style="color:#10b981;">⏱️ Cooldown Behavior</strong>
+        <p style="margin-top:6px;">When a model gets a 429, Molty backs off with exponential cooldown: <strong>1 min → 5 min → 25 min → 1 hour</strong>. After each cooldown, it retries the higher-tier model. Once it responds, the cooldown resets. All transparent.</p>
+      </div>
+    </div>
+
+    <div class="info-box" style="margin-top:1.5rem;">
+      <h3 style="color:#60a5fa;">💾 Prompt Caching</h3>
+      <p>Anthropic automatically caches the system prompt across calls within the same session. Cached tokens don't count toward rate limits and cost 90% less. First message in a session may take ~55s (cold cache), subsequent ones are much faster.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Rate Limiting ─── -->
+<section id="rate-limiting" class="alt-bg">
+  <div class="container">
+    <span class="section-label">Rate Limit Protection</span>
+    <h2 class="section-title">Multi-layer rate limit defense</h2>
+    <p class="section-subtitle">Three layers of protection ensure Molty never fully stops responding.</p>
+
+    <div class="features-grid" style="grid-template-columns:repeat(auto-fit,minmax(250px,1fr));">
+      <div class="feature-card" style="border-color:rgba(96,165,250,0.3);">
+        <div class="feature-icon">🛡️</div>
+        <h3>Layer 1: Model Fallback</h3>
+        <p>Automatic failover through 4 models across 2 providers. If one model is rate-limited, the next one takes over instantly.</p>
+      </div>
+      <div class="feature-card" style="border-color:rgba(139,92,246,0.3);">
+        <div class="feature-icon">🧠</div>
+        <h3>Layer 2: Smart Queue</h3>
+        <p>Adaptive monitoring daemon watches for 429 errors, high concurrency, and system load. Auto-enables request queuing when needed.</p>
+      </div>
+      <div class="feature-card" style="border-color:rgba(6,182,212,0.3);">
+        <div class="feature-icon">💾</div>
+        <h3>Layer 3: Prompt Caching</h3>
+        <p>System prompt cached across API calls. Cached tokens don't count toward rate limits — reduces effective token usage by 60-80%.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Smart Queue ─── -->
+<section id="smart-queue">
+  <div class="container">
+    <span class="section-label">Adaptive Smart Queue</span>
+    <h2 class="section-title">Self-managing protection system</h2>
+    <p class="section-subtitle">A background daemon that watches for problems and automatically activates additional protections.</p>
+
+    <div class="info-box accent-cyan" style="border-width:2px;">
+      <h3 style="color:#06b6d4;">🤖 How the Smart Monitor Works</h3>
+      <p>A background process runs every <strong>30 seconds</strong>, checking three signals:</p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:1.5rem 0;">
+        <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:1rem;text-align:center;">
+          <span style="font-size:1.5rem;display:block;margin-bottom:6px;">🚫</span>
+          <strong style="font-size:0.85rem;color:#f87171;">429 Errors</strong>
+          <p style="font-size:0.78rem;color:#94a3b8;margin-top:4px;">3+ rate limit errors in recent logs triggers queue</p>
+        </div>
+        <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);border-radius:10px;padding:1rem;text-align:center;">
+          <span style="font-size:1.5rem;display:block;margin-bottom:6px;">📊</span>
+          <strong style="font-size:0.85rem;color:#fbbf24;">Concurrency</strong>
+          <p style="font-size:0.78rem;color:#94a3b8;margin-top:4px;">12+ active subagents triggers queue</p>
+        </div>
+        <div style="background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.2);border-radius:10px;padding:1rem;text-align:center;">
+          <span style="font-size:1.5rem;display:block;margin-bottom:6px;">⚡</span>
+          <strong style="font-size:0.85rem;color:#60a5fa;">CPU Load</strong>
+          <p style="font-size:0.78rem;color:#94a3b8;margin-top:4px;">80%+ CPU usage triggers queue</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box" style="margin-top:1.5rem;">
+      <h3 style="color:#06b6d4;">📋 Queue Behavior</h3>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:1rem;">
+        <div class="flow-step" style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.15);">
+          <span class="icon">🚦</span>
+          <div>
+            <strong>Auto-Enable</strong>
+            <p>When thresholds are crossed, the priority queue activates automatically</p>
+          </div>
+        </div>
+        <div class="flow-step" style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.15);">
+          <span class="icon">📋</span>
+          <div>
+            <strong>Priority Ordering</strong>
+            <p>DMs (priority 1) → Group chats (priority 2) → Background tasks (priority 3)</p>
+          </div>
+        </div>
+        <div class="flow-step" style="background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.15);">
+          <span class="icon">🤫</span>
+          <div>
+            <strong>Silent Under 30s</strong>
+            <p>Short waits are invisible — looks like normal processing time</p>
+          </div>
+        </div>
+        <div class="flow-step" style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.15);">
+          <span class="icon">✅</span>
+          <div>
+            <strong>Auto-Recovery</strong>
+            <p>After 5 minutes of stability (no errors, normal load), queue disables itself</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box" style="margin-top:1.5rem;">
+      <h3 style="color:#94a3b8;">🛠️ Manual Controls</h3>
+      <table class="config-table">
+        <thead><tr><th>Command</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td><code>./scripts/smart-queue-monitor.sh status</code></td><td>Check monitor status + current metrics</td></tr>
+          <tr><td><code>./scripts/smart-queue-monitor.sh daemon</code></td><td>Start monitoring daemon</td></tr>
+          <tr><td><code>./scripts/smart-queue-monitor.sh stop</code></td><td>Stop monitoring daemon</td></tr>
+          <tr><td><code>./scripts/queue-control.sh emergency-enable</code></td><td>Force-enable basic queue immediately</td></tr>
+          <tr><td><code>./scripts/queue-control.sh disable</code></td><td>Force-disable queue</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Agents ─── -->
+<section id="agents" class="alt-bg">
+  <div class="container">
+    <span class="section-label">Agent Configuration</span>
+    <h2 class="section-title">Agents running on this install</h2>
+    <p class="section-subtitle">Two agents configured — Molty (main) and Hanna (secondary).</p>
+
+    <div class="features-grid" style="grid-template-columns:1fr 1fr;">
+      <div class="feature-card" style="border-color:rgba(96,165,250,0.3);">
+        <div class="feature-icon">🔧</div>
+        <h3>Molty (Main)</h3>
+        <p><strong>ID:</strong> main<br>
+        <strong>Workspace:</strong> /Users/home/clawd-main<br>
+        <strong>Model:</strong> Claude Opus 4.5<br>
+        <strong>Role:</strong> Primary assistant — coding, business ops, proactive work<br>
+        <strong>Default:</strong> Yes — handles all unrouted messages</p>
+      </div>
+      <div class="feature-card" style="border-color:rgba(139,92,246,0.3);">
+        <div class="feature-icon">👩</div>
+        <h3>Hanna</h3>
+        <p><strong>ID:</strong> hanna<br>
+        <strong>Workspace:</strong> /Users/home/clawd/agents/hanna<br>
+        <strong>Model:</strong> Claude Opus 4.5<br>
+        <strong>Role:</strong> Secondary agent — separate Telegram bot<br>
+        <strong>Groups:</strong> Disabled</p>
+      </div>
+    </div>
+
+    <div class="info-box" style="margin-top:2rem;">
+      <h3 style="color:#60a5fa;">⚙️ Concurrency Limits</h3>
+      <table class="config-table">
+        <thead><tr><th>Setting</th><th>Value</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>maxConcurrent</code></td><td>4</td><td>Max simultaneous main agent runs</td></tr>
+          <tr><td><code>subagents.maxConcurrent</code></td><td>8</td><td>Max simultaneous sub-agent runs</td></tr>
+          <tr><td><code>compaction</code></td><td>safeguard</td><td>Context compaction with memory flush before truncation</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Channels ─── -->
+<section id="channels">
+  <div class="container">
+    <span class="section-label">Messaging Channels</span>
+    <h2 class="section-title">How Molty connects</h2>
+    <p class="section-subtitle">Telegram is the primary channel. WhatsApp plugin is enabled but not linked.</p>
+
+    <div class="info-box accent-blue" style="border-width:2px;">
+      <h3 style="color:#60a5fa;">📱 Telegram (Primary)</h3>
+      <table class="config-table">
+        <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>DM Policy</td><td><code>allowlist</code> — only Ryan (ID: 7191564227)</td></tr>
+          <tr><td>Group Policy</td><td><code>allowlist</code> — Ryan + Leads group</td></tr>
+          <tr><td>Stream Mode</td><td><code>partial</code> — real-time streaming edits</td></tr>
+          <tr><td>Ack Reactions</td><td>Group mentions only (<code>group-mentions</code>)</td></tr>
+          <tr><td>Capabilities</td><td>Inline buttons enabled</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:1rem;"><strong>Molty Bot:</strong> @MoltyBot (main agent)<br>
+      <strong>Hanna Bot:</strong> Separate Telegram bot (DMs only, groups disabled)</p>
+    </div>
+
+    <div class="info-box" style="margin-top:1.5rem;">
+      <h3 style="color:#94a3b8;">📞 WhatsApp</h3>
+      <p>Plugin enabled but not currently linked. Available for future use — supports DMs, groups, voice messages, reactions.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Memory ─── -->
+<section id="memory" class="alt-bg">
+  <div class="container">
+    <span class="section-label">Memory System</span>
+    <h2 class="section-title">How Molty remembers</h2>
+    <p class="section-subtitle">File-based memory with daily logs, long-term curation, and group isolation.</p>
+
+    <div class="status-grid">
+      <div class="status-card">
+        <div class="status-icon">📝</div>
+        <h4>Daily Logs</h4>
+        <p>memory/YYYY-MM-DD.md</p>
+      </div>
+      <div class="status-card">
+        <div class="status-icon">🧠</div>
+        <h4>Long-Term</h4>
+        <p>MEMORY.md — curated</p>
+      </div>
+      <div class="status-card">
+        <div class="status-icon">🔒</div>
+        <h4>Group Isolated</h4>
+        <p>memory/groups/&lt;slug&gt;/</p>
+      </div>
+      <div class="status-card">
+        <div class="status-icon">♻️</div>
+        <h4>Self-Maintaining</h4>
+        <p>Reviews during heartbeats</p>
+      </div>
+    </div>
+
+    <div class="info-box" style="margin-top:2rem;">
+      <h3 style="color:#60a5fa;">📁 Workspace Files</h3>
+      <table class="config-table">
+        <thead><tr><th>File</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>SOUL.md</code></td><td>Personality, behavior rules, core mission</td></tr>
+          <tr><td><code>USER.md</code></td><td>Ryan's info — name, timezone, context</td></tr>
+          <tr><td><code>IDENTITY.md</code></td><td>Molty's name, creature, vibe, emoji</td></tr>
+          <tr><td><code>AGENTS.md</code></td><td>Operating procedures, memory protocol, group chat rules</td></tr>
+          <tr><td><code>TOOLS.md</code></td><td>Local tool notes (cameras, SSH, TTS, etc.)</td></tr>
+          <tr><td><code>HEARTBEAT.md</code></td><td>Periodic task checklist for heartbeat polls</td></tr>
+          <tr><td><code>IDEAS.md</code></td><td>Pipeline of ideas, opportunities, things to explore</td></tr>
+          <tr><td><code>MEMORY.md</code></td><td>Curated long-term memory (main session only)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Projects ─── -->
+<section id="projects">
+  <div class="container">
+    <span class="section-label">Active Projects</span>
+    <h2 class="section-title">What Molty is working on</h2>
+    <p class="section-subtitle">Current projects, repos, and deployments managed by this install.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🌐</div>
+        <h3>Denver AI Training</h3>
+        <p><strong>Site:</strong> denveraitraining.com<br>
+        <strong>Repo:</strong> RShuken/denveraitraining<br>
+        <strong>Stack:</strong> Next.js → Cloudflare Pages<br>
+        <strong>PRs:</strong> Stripe checkout, SEO polish</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔮</div>
+        <h3>OpenClaw Install</h3>
+        <p><strong>Site:</strong> openclawinstall.net<br>
+        <strong>Repo:</strong> RShuken/openclawinstall<br>
+        <strong>Stack:</strong> Next.js → Cloudflare Pages<br>
+        <strong>PRs:</strong> Stripe checkout, SEO polish</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚙️</div>
+        <h3>MC-Leads Worker</h3>
+        <p><strong>Repo:</strong> RShuken/molty-bot-sites<br>
+        <strong>Stack:</strong> CF Worker + D1 + Stripe<br>
+        <strong>PRs:</strong> /checkout/quick endpoint<br>
+        <strong>Features:</strong> Lead capture, Turnstile, payments</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">👤</div>
+        <h3>Client Installs</h3>
+        <p><strong>Vishnu (Ian Ferguson)</strong><br>
+        <strong>Host:</strong> Mac Mini via Tailscale<br>
+        <strong>SSH:</strong> roberts-mac-mini<br>
+        <strong>Model:</strong> Claude Sonnet 4 + Haiku fallback</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Config Reference ─── -->
+<section id="config" class="alt-bg">
+  <div class="container">
+    <span class="section-label">Configuration Reference</span>
+    <h2 class="section-title">Key config settings</h2>
+    <p class="section-subtitle">Quick reference for important configuration values.</p>
+
+    <div class="info-box">
+      <h3 style="color:#60a5fa;">🔑 Auth Profiles</h3>
+      <table class="config-table">
+        <thead><tr><th>Profile</th><th>Provider</th><th>Mode</th></tr></thead>
+        <tbody>
+          <tr><td><code>anthropic:default</code></td><td>Anthropic</td><td>Token</td></tr>
+          <tr><td><code>openai-codex:default</code></td><td>OpenAI Codex</td><td>OAuth</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-box" style="margin-top:1.5rem;">
+      <h3 style="color:#60a5fa;">🧰 Installed Skills</h3>
+      <table class="config-table">
+        <thead><tr><th>Skill</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>goplaces</code></td><td>Google Places API queries</td></tr>
+          <tr><td><code>openai-image-gen</code></td><td>Image generation via OpenAI</td></tr>
+          <tr><td><code>openai-whisper-api</code></td><td>Audio transcription via Whisper</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-box" style="margin-top:1.5rem;">
+      <h3 style="color:#60a5fa;">🔌 Active Plugins</h3>
+      <table class="config-table">
+        <thead><tr><th>Plugin</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td><code>telegram</code></td><td>✅ Enabled</td></tr>
+          <tr><td><code>whatsapp</code></td><td>✅ Enabled (not linked)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-box" style="margin-top:1.5rem;">
+      <h3 style="color:#60a5fa;">🔗 Internal Hooks</h3>
+      <table class="config-table">
+        <thead><tr><th>Hook</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td><code>boot-md</code></td><td>✅ Loads workspace .md files at session start</td></tr>
+          <tr><td><code>command-logger</code></td><td>✅ Logs slash commands</td></tr>
+          <tr><td><code>session-memory</code></td><td>✅ Session persistence</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FAQ ─── -->
+<section id="faq">
+  <div class="container">
+    <span class="section-label">FAQ</span>
+    <h2 class="section-title">Common questions</h2>
+
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>How do I restart Molty?</summary>
+        <div class="faq-body">Run <code>clawdbot gateway restart</code> from the terminal, or send <code>/reset</code> in Telegram to reset the current session without restarting the gateway.</div>
+      </details>
+      <details class="faq-item">
+        <summary>What happens if Molty runs out of context?</summary>
+        <div class="faq-body">Molty uses "safeguard" compaction mode. When the context window fills up, it triggers a memory flush (saving important context to daily memory files), then compacts the conversation into a summary. Long-term memory in MEMORY.md is preserved.</div>
+      </details>
+      <details class="faq-item">
+        <summary>How do I add a new Telegram group?</summary>
+        <div class="faq-body">Add the group's chat ID to <code>channels.telegram.groupAllowFrom</code> in the config, then restart the gateway. Molty will automatically create isolated memory for the new group.</div>
+      </details>
+      <details class="faq-item">
+        <summary>How do I check API usage/costs?</summary>
+        <div class="faq-body">Send <code>/status</code> in Telegram to see current session costs, or check the Anthropic console at <a href="https://console.anthropic.com/settings/billing" target="_blank" style="color:#60a5fa;">console.anthropic.com</a>.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Can Molty access other machines?</summary>
+        <div class="faq-body">Yes — SSH is configured to <code>roberts-mac-mini</code> (Ian's Vishnu install) via Tailscale. Additional SSH hosts can be added to <code>~/.ssh/config</code>.</div>
+      </details>
+      <details class="faq-item">
+        <summary>What if the smart queue monitor crashes?</summary>
+        <div class="faq-body">The model fallback chain (Layer 1) still works independently. You can manually restart the monitor with <code>./scripts/smart-queue-monitor.sh daemon</code>, or use <code>./scripts/queue-control.sh emergency-enable</code> to force-enable the queue.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Footer ─── -->
+<footer>
+  <div class="footer-brand">🔧 Molty Bot — System Overview</div>
+  <p>Managed by <a href="https://openclawinstall.net" target="_blank">OpenClaw Install</a> · <a href="https://denveraitraining.com" target="_blank">Denver AI Training</a></p>
+  <div class="footer-divider"></div>
+  <p class="footer-note">Internal documentation · Ryan S · Powered by Clawdbot + Claude</p>
+  <p class="footer-note" style="margin-top: 8px;">Last updated: February 1, 2026</p>
+</footer>
+
+<!-- ─── Mobile Nav ─── -->
+<script>
+  document.querySelectorAll('nav ul li a').forEach(link => {
+    link.addEventListener('click', () => {
+      document.querySelector('nav ul').classList.remove('open');
+    });
+  });
+</script>
+
+</body>
+</html>
