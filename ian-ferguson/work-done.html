@@ -5,169 +5,168 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vishnu Work Done - Ian Ferguson Project</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; max-width: 900px; margin: 40px auto; }
         h1 { color: #2c3e50; }
         h2 { color: #34495e; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
-        .date { color: #7f8c8d; font-style: italic; }
+        .date { color: #7f8c8d; font-style: italic; margin-bottom: 24px; }
         .section { margin: 20px 0; }
-        .code-block { background-color: #f8f9fa; border-left: 4px solid #3498db; padding: 10px; margin: 10px 0; }
+        .code-block { background-color: #f8f9fa; border-left: 4px solid #3498db; padding: 10px; margin: 10px 0; font-size: 0.9em; overflow-x: auto; }
         .command { font-family: monospace; background-color: #333; color: #fff; padding: 2px 4px; }
-        .work-item { border: 1px solid #eee; margin: 15px 0; padding: 15px; border-radius: 5px; }
-        .work-date { font-weight: bold; color: #27ae60; }
+        code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+
+        /* Work items with collapsible details */
+        .work-item { border: 1px solid #e0e0e0; margin: 15px 0; border-radius: 8px; overflow: hidden; }
+        .work-item summary {
+            padding: 15px;
+            cursor: pointer;
+            background: #fafafa;
+            border-bottom: 1px solid #e0e0e0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .work-item summary::-webkit-details-marker { display: none; }
+        .work-item summary::before {
+            content: '▶';
+            font-size: 0.7em;
+            transition: transform 0.2s;
+            flex-shrink: 0;
+        }
+        .work-item[open] summary::before { transform: rotate(90deg); }
+        .work-item[open] summary { border-bottom: 1px solid #e0e0e0; }
+        .work-item .details-body { padding: 15px; }
+        .work-date { font-weight: bold; color: #27ae60; font-size: 0.85em; white-space: nowrap; }
+        .work-title { font-weight: 600; color: #2c3e50; font-size: 1.05em; }
+        .work-summary { color: #666; font-size: 0.9em; margin-left: auto; }
+
+        /* Status badges */
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; font-weight: 600; }
+        .badge-fix { background: #fee2e2; color: #991b1b; }
+        .badge-config { background: #dbeafe; color: #1e40af; }
+        .badge-setup { background: #d1fae5; color: #065f46; }
+
+        @media (max-width: 640px) {
+            body { margin: 16px; }
+            .work-item summary { flex-wrap: wrap; }
+            .work-summary { display: none; }
+        }
     </style>
 </head>
 <body>
     <h1>Vishnu Work Done Log</h1>
     <div class="date">Tracking all work performed on Ian Ferguson's Vishnu AI Assistant</div>
 
-    <div class="work-item">
-        <div class="work-date">February 3, 2026 - 4:37 PM MST</div>
-        <h3>🔥 Context Overflow — Root Cause Diagnosis &amp; Resolution</h3>
-        
-        <h4>Problem Identified</h4>
-        <p>Vishnu was experiencing recurring <strong>context overflow errors</strong> and <strong>API rate limit failures (HTTP 429)</strong> that caused degraded performance, failed responses, and system instability. After investigation, we discovered the root cause: <strong>Ian had shared his entire conversation history from ChatGPT and Claude with Vishnu</strong>, asking it to save everything permanently for future reference.</p>
-        
-        <h4>Root Cause Analysis</h4>
-        <p>A transcribed voice message was found where Ian explicitly asked Vishnu to "take all this information and save it and make sure that it's in a place you can reference forever." This caused:</p>
-        <ol>
-            <li><strong>Memory Database Bloat:</strong> The main memory database (main.sqlite) grew to 5.1 MB with 89 embedding cache entries, compared to only 4 entries in the clean Hanna database</li>
-            <li><strong>Context Inflation:</strong> Every interaction triggered memory searches against this bloated index, pulling in historical context from years of ChatGPT/Claude conversations, adding thousands of extra tokens per request</li>
-            <li><strong>Concurrent Session Overload:</strong> Multiple sessions (group chats, sub-agents, cron jobs) each carried this inflated context, triggering rate limits when combined</li>
-        </ol>
+    <!-- ─── Feb 3: Context Overflow Fix ─── -->
+    <details class="work-item" open>
+        <summary>
+            <span class="work-date">Feb 3, 2026 — 4:37 PM</span>
+            <span class="work-title">🔥 Context Overflow — Root Cause &amp; Fix</span>
+            <span class="badge badge-fix">FIX</span>
+        </summary>
+        <div class="details-body">
+            <h4>Problem</h4>
+            <p>Vishnu was experiencing recurring <strong>context overflow errors</strong> and <strong>API rate limit failures (HTTP 429)</strong>. After investigation, we discovered the root cause: <strong>Ian had shared his entire conversation history from ChatGPT and Claude with Vishnu</strong>, asking it to save everything permanently.</p>
 
-        <h4>Pre-Fix State</h4>
-        <div class="code-block">
-            <p><strong>main.sqlite:</strong> 5.1 MB (89 embedding entries, 1,429,546 bytes of embeddings)</p>
-            <p><strong>hanna.sqlite:</strong> 3.2 MB (4 embedding entries — healthy baseline)</p>
-            <p><strong>Embedding ratio:</strong> 22:1 (main vs hanna — indicating massive bloat)</p>
-            <p><strong>Session token usage:</strong> Multiple sessions at 30-48% capacity, cascading to rate limits</p>
+            <h4>Root Cause</h4>
+            <p>A transcribed voice message confirmed Ian asked Vishnu to <em>"take all this information and save it and make sure that it's in a place you can reference forever."</em> This caused:</p>
+            <ol>
+                <li><strong>Memory Database Bloat:</strong> main.sqlite grew to 5.1 MB with 89 embedding entries (vs 4 in a clean database)</li>
+                <li><strong>Context Inflation:</strong> Every interaction searched the bloated index, pulling in years of historical context</li>
+                <li><strong>Concurrent Session Overload:</strong> Multiple sessions each carrying inflated context triggered cascading rate limits</li>
+            </ol>
+
+            <h4>Pre-Fix State</h4>
+            <div class="code-block">
+                <strong>main.sqlite:</strong> 5.1 MB (89 embeddings, 1,429,546 bytes)<br>
+                <strong>hanna.sqlite:</strong> 3.2 MB (4 embeddings — healthy baseline)<br>
+                <strong>Embedding ratio:</strong> 22:1 main vs hanna<br>
+                <strong>Sessions:</strong> 30-48% capacity each, cascading to rate limits
+            </div>
+
+            <h4>Fix Applied</h4>
+            <div class="code-block">
+                <span class="command">cp main.sqlite main.sqlite.bak</span> &nbsp;# backup<br>
+                <span class="command">cp hanna.sqlite hanna.sqlite.bak</span> &nbsp;# backup<br>
+                <span class="command">rm main.sqlite hanna.sqlite</span> &nbsp;# remove bloated DBs<br>
+                # System auto-rebuilds fresh, minimal databases on next use
+            </div>
+
+            <h4>Post-Fix Validation</h4>
+            <ul>
+                <li>✅ Database size: 5.1 MB → 0 (rebuilds under 100 KB)</li>
+                <li>✅ Embeddings: 89 → 0 (rebuilds with ~6 from current files)</li>
+                <li>✅ Memory search: Working — returns only current, relevant data</li>
+                <li>✅ Backups preserved for recovery if needed</li>
+            </ul>
+
+            <h4>Lessons Learned</h4>
+            <ol>
+                <li>Never bulk-import conversation history from other AI platforms — summarize key points instead</li>
+                <li>Embedding databases grow silently (5.1 MB DB had only 8 KB of readable text)</li>
+                <li>Concurrent sessions multiply memory bloat into rate limit cascades</li>
+            </ol>
         </div>
+    </details>
 
-        <h4>Solution Implemented</h4>
-        <p>Since Ian confirmed he no longer needs the imported conversation history, we performed a clean reset of the memory databases:</p>
-        
-        <h5>Commands Used:</h5>
-        <div class="code-block">
-            <p># Step 1: Back up databases before deletion<br>
-            <span class="command">cp /Users/home/.clawdbot/memory/main.sqlite /Users/home/.clawdbot/memory/main.sqlite.bak</span><br>
-            <span class="command">cp /Users/home/.clawdbot/memory/hanna.sqlite /Users/home/.clawdbot/memory/hanna.sqlite.bak</span></p>
-            
-            <p># Step 2: Remove the bloated databases<br>
-            <span class="command">rm /Users/home/.clawdbot/memory/main.sqlite</span><br>
-            <span class="command">rm /Users/home/.clawdbot/memory/hanna.sqlite</span></p>
-            
-            <p># Step 3: System auto-rebuilds fresh databases on next memory search<br>
-            <span class="command"># New databases contain ONLY current workspace files (MEMORY.md, memory/*.md)</span></p>
+    <!-- ─── Feb 3: Rate Limit Optimization ─── -->
+    <details class="work-item">
+        <summary>
+            <span class="work-date">Feb 3, 2026 — 12:25 PM</span>
+            <span class="work-title">API Rate Limit Optimization</span>
+            <span class="badge badge-config">CONFIG</span>
+        </summary>
+        <div class="details-body">
+            <h4>Problem</h4>
+            <p>Vishnu was hitting Anthropic API rate limits (HTTP 429), falling back to Gemini despite having Tier 2 limits (450k tokens/min, 1k requests/min).</p>
+
+            <h4>Solution</h4>
+            <ol>
+                <li><strong>Reordered Fallback Chain:</strong> Opus → Gemini → Sonnet → GPT-4o (Gemini moved up as faster fallback)</li>
+                <li><strong>Preserved Concurrency:</strong> Kept all 4 concurrent agents</li>
+                <li><strong>Smart Retry Logic:</strong> 3-minute cooldowns to prevent retry loops</li>
+            </ol>
+
+            <h4>Commands</h4>
+            <div class="code-block">
+                <span class="command">cp ~/.clawdbot/clawdbot.json ~/.clawdbot/clawdbot.json.backup.$(date +%s)</span><br>
+                # Updated fallbacks in config: ["gemini-3-pro-preview", "claude-sonnet-4", "gpt-4o"]<br>
+                <span class="command">clawdbot gateway restart</span>
+            </div>
+
+            <h4>Result</h4>
+            <p>When Claude hits rate limits: tries Gemini first (fast), then Sonnet, then GPT-4o. 3-min cooldown prevents retry storms.</p>
         </div>
+    </details>
 
-        <h4>Post-Fix Validation</h4>
-        <ul>
-            <li>✅ <strong>Database size:</strong> 5.1 MB → 0 MB (clean slate, will rebuild under 100 KB)</li>
-            <li>✅ <strong>Embeddings:</strong> 89 → 0 entries (will rebuild with ~6 from current files)</li>
-            <li>✅ <strong>Memory search:</strong> Working correctly — returns relevant results from current data only</li>
-            <li>✅ <strong>Backups preserved:</strong> main.sqlite.bak and hanna.sqlite.bak saved for recovery</li>
-            <li>✅ <strong>No config changes needed:</strong> System architecture unchanged</li>
-        </ul>
+    <!-- ─── Feb 1-2: Initial Setup ─── -->
+    <details class="work-item">
+        <summary>
+            <span class="work-date">Feb 1–2, 2026</span>
+            <span class="work-title">Initial Setup &amp; Configuration</span>
+            <span class="badge badge-setup">SETUP</span>
+        </summary>
+        <div class="details-body">
+            <h4>Work Completed</h4>
+            <ul>
+                <li>undici installed for ClawdHub on Node v25</li>
+                <li>Browser set to use clawd profile</li>
+                <li>Cooldowns reduced from 1hr → 3min</li>
+                <li>Stuck cooldown state cleared</li>
+                <li>$60 loaded → Tier 2 rate limits</li>
+                <li>Local embeddings for memory search</li>
+                <li>Full explainer website created</li>
+            </ul>
 
-        <h4>Lessons Learned</h4>
-        <ol>
-            <li><strong>AI memory has limits.</strong> Importing years of conversation history creates a permanent tax on every future interaction</li>
-            <li><strong>Embedding databases grow silently.</strong> The 5.1 MB database had only 8 KB of readable text — the rest was vector embeddings invisible to users</li>
-            <li><strong>Concurrent sessions multiply the problem.</strong> A single bloated session might work; multiple concurrent sessions create cascading rate limit failures</li>
-            <li><strong>Prevention tip:</strong> Never bulk-import conversation history — instead, summarize key points and save only what's actionable</li>
-        </ol>
-
-        <p><a href="context-overflow-fix.html">📄 View Full Case Study →</a></p>
-    </div>
-
-    <div class="work-item">
-        <div class="work-date">February 3, 2026 - 12:25 PM MST</div>
-        <h3>API Rate Limit Optimization</h3>
-        
-        <h4>Problem Identified</h4>
-        <p>Vishnu was experiencing Anthropic API rate limits (HTTP 429 errors), causing the system to fall back to alternative models like Gemini. This was happening despite Ian having a Tier 2 Anthropic account with substantial rate limits (450k tokens/min, 1k requests/min).</p>
-        
-        <h4>Solution Implemented</h4>
-        <p>We modified Vishnu's configuration to optimize the model fallback behavior without restricting Ian's usage:</p>
-        
-        <h5>Changes Made:</h5>
-        <ol>
-            <li><strong>Reordered Fallback Chain:</strong> Changed from Claude Opus → Claude Sonnet → Gemini → GPT-4o to Claude Opus → Gemini → Claude Sonnet → GPT-4o</li>
-            <li><strong>Preserved Concurrency:</strong> Maintained all 4 concurrent agents as requested</li>
-            <li><strong>Smart Retry Logic:</strong> Kept existing 3-minute cooldowns to prevent retry loops</li>
-        </ol>
-
-        <h5>Commands Used:</h5>
-        <div class="code-block">
-            <p># Created backup of original configuration<br>
-            <span class="command">cp ~/.clawdbot/clawdbot.json ~/.clawdbot/clawdbot.json.backup.$(date +%s)</span></p>
-            
-            <p># Updated fallback sequence in configuration<br>
-            <span class="command">python3 -c '</span><br>
-            <span class="command">import json</span><br>
-            <span class="command">with open("/Users/vishnu/.clawdbot/clawdbot.json", "r") as f:</span><br>
-            <span class="command">&nbsp;&nbsp;&nbsp;&nbsp;config = json.load(f)</span><br>
-            <span class="command">config["agents"]["defaults"]["model"]["fallbacks"] = [</span><br>
-            <span class="command">&nbsp;&nbsp;&nbsp;&nbsp;"google/gemini-3-pro-preview",</span><br>
-            <span class="command">&nbsp;&nbsp;&nbsp;&nbsp;"anthropic/claude-sonnet-4-20250514",</span><br>
-            <span class="command">&nbsp;&nbsp;&nbsp;&nbsp;"openai/gpt-4o"</span><br>
-            <span class="command">]</span><br>
-            <span class="command">with open("/Users/vishnu/.clawdbot/clawdbot.json", "w") as f:</span><br>
-            <span class="command">&nbsp;&nbsp;&nbsp;&nbsp;json.dump(config, f, indent=2)</span><br>
-            <span class="command">'</span></p>
-            
-            <p># Restarted Vishnu to apply changes<br>
-            <span class="command">clawdbot gateway restart</span></p>
+            <h4>Configuration</h4>
+            <ul>
+                <li><strong>Primary Model:</strong> Claude Opus 4.5</li>
+                <li><strong>Fallback Chain:</strong> Opus 4.5 → Sonnet 4 → Gemini 3 Pro → GPT-4o</li>
+                <li><strong>API Tier:</strong> Tier 2 ($60) — 450k tokens/min, 1k requests/min</li>
+                <li><strong>Features:</strong> Web search, browser, heartbeat, nightshift, memory, multi-provider failover</li>
+            </ul>
         </div>
-
-        <h5>How It Works Now</h5>
-        <p>When Anthropic APIs return rate limit errors:</p>
-        <ol>
-            <li>Vishnu tries Claude Opus (primary) - if rate limited</li>
-            <li>Immediately switches to Gemini (fast, reliable alternative)</li>
-            <li>Only tries Claude Sonnet if Gemini is unavailable</li>
-            <li>Uses GPT-4o as final fallback</li>
-            <li>3-minute cooldown prevents retry loops that trigger more rate limits</li>
-        </ol>
-        
-        <h5>Expected Results</h5>
-        <ul>
-            <li>Reduced Anthropic rate limit errors</li>
-            <li>Better performance through intelligent fallbacks</li>
-            <li>Maintained full concurrency (4 agents) for Ian</li>
-            <li>No degradation in user experience</li>
-            <li>Seamless switching between models as needed</li>
-        </ul>
-    </div>
-
-    <div class="work-item">
-        <div class="work-date">February 1-2, 2026</div>
-        <h3>Initial Setup and Configuration</h3>
-        
-        <h4>Work Completed</h4>
-        <ul>
-            <li>undici installed for ClawdHub on Node v25</li>
-            <li>Browser set to use clawd profile</li>
-            <li>Cooldowns reduced from 1hr → 3min</li>
-            <li>Stuck cooldown state cleared</li>
-            <li>$60 loaded → Tier 2 rate limits</li>
-            <li>Local embeddings for memory search</li>
-            <li>Full explainer website created</li>
-        </ul>
-        
-        <h4>Configuration Details</h4>
-        <ul>
-            <li>Primary Model: Claude Opus 4.5</li>
-            <li>Fallback Chain: Opus 4.5 → Sonnet 4 → Gemini 3 Pro → GPT-4o</li>
-            <li>API Tier: Tier 2 ($60 deposited) - 450k tokens/min, 1k requests/min</li>
-            <li>Features Enabled: Web search, web fetch, browser control, heartbeat monitoring, nightshift work, memory system, multi-provider failover</li>
-        </ul>
-    </div>
-
-    <div class="section">
-        <h2>Future Work Tracking</h2>
-        <p>This page will be updated as new work is performed on Vishnu. Each entry includes the date, description of work, methods used, and outcomes achieved.</p>
-    </div>
+    </details>
 
     <div class="section">
         <h2>About Vishnu</h2>
