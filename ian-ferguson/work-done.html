@@ -76,28 +76,27 @@
                 <li><strong>Concurrent Session Overload:</strong> Multiple sessions each carrying inflated context triggered cascading rate limits</li>
             </ol>
 
-            <h4>Pre-Fix State</h4>
+            <h4>Pre-Fix State — Vishnu's Mac Mini</h4>
             <div class="code-block">
-                <strong>main.sqlite:</strong> 5.1 MB (89 embeddings, 1,429,546 bytes)<br>
-                <strong>hanna.sqlite:</strong> 3.2 MB (4 embeddings — healthy baseline)<br>
-                <strong>Embedding ratio:</strong> 22:1 main vs hanna<br>
-                <strong>Sessions:</strong> 30-48% capacity each, cascading to rate limits
+                <strong>main.sqlite:</strong> 16 MB (48 chunks, 48 embeddings, 23 memory files from a single day)<br>
+                <strong>Total text:</strong> 59 KB actual content buried under 1.9 MB of vector embeddings<br>
+                <strong>Result:</strong> Context overflow errors, Claude usage burned through daily limits
             </div>
 
-            <h4>Fix Applied</h4>
+            <h4>Fix Applied — Vishnu's Mac Mini (6:13 PM MST)</h4>
             <div class="code-block">
-                <span class="command">cp main.sqlite main.sqlite.bak</span> &nbsp;# backup<br>
-                <span class="command">cp hanna.sqlite hanna.sqlite.bak</span> &nbsp;# backup<br>
-                <span class="command">rm main.sqlite hanna.sqlite</span> &nbsp;# remove bloated DBs<br>
-                # System auto-rebuilds fresh, minimal databases on next use
+                <span class="command">ssh vishnu@100.106.206.127</span><br>
+                <span class="command">cp ~/.clawdbot/memory/main.sqlite ~/.clawdbot/memory/main.sqlite.bak</span> &nbsp;# backup<br>
+                <span class="command">rm ~/.clawdbot/memory/main.sqlite</span> &nbsp;# remove 16 MB bloated DB<br>
+                # System auto-rebuilds fresh, minimal database on next use
             </div>
 
             <h4>Post-Fix Validation</h4>
             <ul>
-                <li>✅ Database size: 5.1 MB → 0 (rebuilds under 100 KB)</li>
-                <li>✅ Embeddings: 89 → 0 (rebuilds with ~6 from current files)</li>
-                <li>✅ Memory search: Working — returns only current, relevant data</li>
-                <li>✅ Backups preserved for recovery if needed</li>
+                <li>✅ Vishnu database: 16 MB → 0 (clean slate, verified via SSH)</li>
+                <li>✅ Backup preserved as main.sqlite.bak on Vishnu's machine</li>
+                <li>✅ System rebuilds clean database from current workspace files only</li>
+                <li>✅ No more imported ChatGPT/Claude history in the index</li>
             </ul>
 
             <h4>Lessons Learned</h4>
