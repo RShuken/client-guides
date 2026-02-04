@@ -21,6 +21,66 @@
     <div class="date">Tracking all work performed on Ian Ferguson's Vishnu AI Assistant</div>
 
     <div class="work-item">
+        <div class="work-date">February 3, 2026 - 4:37 PM MST</div>
+        <h3>🔥 Context Overflow — Root Cause Diagnosis &amp; Resolution</h3>
+        
+        <h4>Problem Identified</h4>
+        <p>Vishnu was experiencing recurring <strong>context overflow errors</strong> and <strong>API rate limit failures (HTTP 429)</strong> that caused degraded performance, failed responses, and system instability. After investigation, we discovered the root cause: <strong>Ian had shared his entire conversation history from ChatGPT and Claude with Vishnu</strong>, asking it to save everything permanently for future reference.</p>
+        
+        <h4>Root Cause Analysis</h4>
+        <p>A transcribed voice message was found where Ian explicitly asked Vishnu to "take all this information and save it and make sure that it's in a place you can reference forever." This caused:</p>
+        <ol>
+            <li><strong>Memory Database Bloat:</strong> The main memory database (main.sqlite) grew to 5.1 MB with 89 embedding cache entries, compared to only 4 entries in the clean Hanna database</li>
+            <li><strong>Context Inflation:</strong> Every interaction triggered memory searches against this bloated index, pulling in historical context from years of ChatGPT/Claude conversations, adding thousands of extra tokens per request</li>
+            <li><strong>Concurrent Session Overload:</strong> Multiple sessions (group chats, sub-agents, cron jobs) each carried this inflated context, triggering rate limits when combined</li>
+        </ol>
+
+        <h4>Pre-Fix State</h4>
+        <div class="code-block">
+            <p><strong>main.sqlite:</strong> 5.1 MB (89 embedding entries, 1,429,546 bytes of embeddings)</p>
+            <p><strong>hanna.sqlite:</strong> 3.2 MB (4 embedding entries — healthy baseline)</p>
+            <p><strong>Embedding ratio:</strong> 22:1 (main vs hanna — indicating massive bloat)</p>
+            <p><strong>Session token usage:</strong> Multiple sessions at 30-48% capacity, cascading to rate limits</p>
+        </div>
+
+        <h4>Solution Implemented</h4>
+        <p>Since Ian confirmed he no longer needs the imported conversation history, we performed a clean reset of the memory databases:</p>
+        
+        <h5>Commands Used:</h5>
+        <div class="code-block">
+            <p># Step 1: Back up databases before deletion<br>
+            <span class="command">cp /Users/home/.clawdbot/memory/main.sqlite /Users/home/.clawdbot/memory/main.sqlite.bak</span><br>
+            <span class="command">cp /Users/home/.clawdbot/memory/hanna.sqlite /Users/home/.clawdbot/memory/hanna.sqlite.bak</span></p>
+            
+            <p># Step 2: Remove the bloated databases<br>
+            <span class="command">rm /Users/home/.clawdbot/memory/main.sqlite</span><br>
+            <span class="command">rm /Users/home/.clawdbot/memory/hanna.sqlite</span></p>
+            
+            <p># Step 3: System auto-rebuilds fresh databases on next memory search<br>
+            <span class="command"># New databases contain ONLY current workspace files (MEMORY.md, memory/*.md)</span></p>
+        </div>
+
+        <h4>Post-Fix Validation</h4>
+        <ul>
+            <li>✅ <strong>Database size:</strong> 5.1 MB → 0 MB (clean slate, will rebuild under 100 KB)</li>
+            <li>✅ <strong>Embeddings:</strong> 89 → 0 entries (will rebuild with ~6 from current files)</li>
+            <li>✅ <strong>Memory search:</strong> Working correctly — returns relevant results from current data only</li>
+            <li>✅ <strong>Backups preserved:</strong> main.sqlite.bak and hanna.sqlite.bak saved for recovery</li>
+            <li>✅ <strong>No config changes needed:</strong> System architecture unchanged</li>
+        </ul>
+
+        <h4>Lessons Learned</h4>
+        <ol>
+            <li><strong>AI memory has limits.</strong> Importing years of conversation history creates a permanent tax on every future interaction</li>
+            <li><strong>Embedding databases grow silently.</strong> The 5.1 MB database had only 8 KB of readable text — the rest was vector embeddings invisible to users</li>
+            <li><strong>Concurrent sessions multiply the problem.</strong> A single bloated session might work; multiple concurrent sessions create cascading rate limit failures</li>
+            <li><strong>Prevention tip:</strong> Never bulk-import conversation history — instead, summarize key points and save only what's actionable</li>
+        </ol>
+
+        <p><a href="context-overflow-fix.html">📄 View Full Case Study →</a></p>
+    </div>
+
+    <div class="work-item">
         <div class="work-date">February 3, 2026 - 12:25 PM MST</div>
         <h3>API Rate Limit Optimization</h3>
         
