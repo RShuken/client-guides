@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenClaw Security Guide — Hardening Your AI Agent</title>
+  <style>
+    :root {
+      --bg: #0a0e17;
+      --surface: #111827;
+      --surface2: #1a2332;
+      --border: #1e293b;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --green: #10b981;
+      --green-bg: rgba(16, 185, 129, 0.08);
+      --green-border: rgba(16, 185, 129, 0.2);
+      --yellow: #f59e0b;
+      --yellow-bg: rgba(245, 158, 11, 0.08);
+      --yellow-border: rgba(245, 158, 11, 0.2);
+      --red: #ef4444;
+      --red-bg: rgba(239, 68, 68, 0.08);
+      --red-border: rgba(239, 68, 68, 0.2);
+      --blue: #3b82f6;
+      --purple: #a855f7;
+      --accent: #6366f1;
+      --cyan: #22d3ee;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      padding: 3rem 0 2rem;
+    }
+
+    header .shield {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      margin-bottom: 1.5rem;
+      font-size: 2.2rem;
+      box-shadow: 0 0 40px rgba(99, 102, 241, 0.3);
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #fff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Navigation */
+    .nav-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      margin: 2rem 0;
+    }
+
+    .nav-pill {
+      padding: 0.5rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .nav-pill:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    /* Alert Box */
+    .alert {
+      background: var(--red-bg);
+      border: 1px solid var(--red-border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin: 2rem 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .alert .icon { font-size: 1.5rem; flex-shrink: 0; }
+    .alert h3 { color: var(--red); font-size: 1rem; margin-bottom: 0.25rem; }
+    .alert p { color: var(--text-muted); font-size: 0.9rem; }
+
+    /* Sections */
+    section {
+      margin: 3rem 0;
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--text);
+    }
+
+    h2 .accent { color: var(--accent); }
+
+    .section-intro {
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      max-width: 700px;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card p { color: var(--text-muted); font-size: 0.9rem; }
+
+    /* CVE Table */
+    .cve-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.85rem;
+    }
+
+    .cve-table th {
+      text-align: left;
+      padding: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface2);
+    }
+
+    .cve-table td {
+      padding: 0.75rem;
+      border-bottom: 1px solid rgba(30, 41, 59, 0.5);
+    }
+
+    .cve-table code {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--red);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .severity-critical {
+      background: var(--red);
+      color: white;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    /* Checklist */
+    .checklist {
+      list-style: none;
+    }
+
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(30, 41, 59, 0.3);
+    }
+
+    .checklist li:last-child { border-bottom: none; }
+
+    .check-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .check-icon.critical { background: var(--red-bg); color: var(--red); }
+    .check-icon.warning { background: var(--yellow-bg); color: var(--yellow); }
+    .check-icon.info { background: rgba(99, 102, 241, 0.1); color: var(--accent); }
+
+    .checklist li .content { flex: 1; }
+    .checklist li .title { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.2rem; }
+    .checklist li .desc { color: var(--text-muted); font-size: 0.85rem; }
+
+    /* Code blocks */
+    .code-block {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.8rem;
+      overflow-x: auto;
+      margin: 1rem 0;
+      position: relative;
+    }
+
+    .code-block .lang {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.75rem;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .code-block pre {
+      margin: 0;
+      color: #c9d1d9;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* Prompt box */
+    .prompt-box {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(168, 85, 247, 0.05));
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .prompt-box h3 {
+      color: var(--accent);
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .prompt-box .copy-btn {
+      margin-left: auto;
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.3rem 0.75rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .prompt-box .copy-btn:hover { background: var(--purple); }
+
+    .prompt-content {
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: #c9d1d9;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    /* Best practices grid */
+    .practices-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .practice-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      transition: border-color 0.2s;
+    }
+
+    .practice-card:hover { border-color: rgba(99, 102, 241, 0.3); }
+
+    .practice-card .icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      margin-bottom: 0.75rem;
+      background: rgba(99, 102, 241, 0.1);
+    }
+
+    .practice-card h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.4rem; }
+    .practice-card p { font-size: 0.85rem; color: var(--text-muted); }
+
+    /* Report card section */
+    .report-card-promo {
+      background: linear-gradient(135deg, var(--surface), var(--surface2));
+      border: 2px solid var(--green-border);
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+      margin: 2rem 0;
+    }
+
+    .report-card-promo .grade {
+      font-size: 4rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--green), #34d399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .report-card-promo h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .report-card-promo p {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .report-card-promo .btn {
+      display: inline-block;
+      background: var(--green);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .report-card-promo .btn:hover { background: #059669; }
+
+    /* Sources */
+    .sources {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .sources h3 {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .source-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .source-link {
+      display: block;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      transition: all 0.2s;
+    }
+
+    .source-link:hover { border-color: var(--accent); color: var(--text); }
+    .source-link .org { color: var(--accent); font-weight: 600; display: block; margin-bottom: 0.2rem; font-size: 0.75rem; }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 3rem 0 1rem;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    footer a:hover { color: var(--purple); }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .container { padding: 1rem; }
+      h1 { font-size: 1.8rem; }
+      .nav-pills { gap: 0.35rem; }
+      .nav-pill { padding: 0.4rem 0.75rem; font-size: 0.75rem; }
+      .practices-grid { grid-template-columns: 1fr; }
+      .source-grid { grid-template-columns: 1fr; }
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <div class="shield">🛡️</div>
+    <h1>OpenClaw Security Guide</h1>
+    <p>Everything you need to know to keep your AI agent secure — vulnerabilities, best practices, and how to audit your setup.</p>
+  </header>
+
+  <nav class="nav-pills">
+    <a href="#vulnerabilities" class="nav-pill">Known Vulnerabilities</a>
+    <a href="#checklist" class="nav-pill">Security Checklist</a>
+    <a href="#best-practices" class="nav-pill">Best Practices</a>
+    <a href="#audit-prompt" class="nav-pill">Audit Prompt</a>
+    <a href="#report-card" class="nav-pill">Get Report Card</a>
+  </nav>
+
+  <!-- Alert -->
+  <div class="alert">
+    <div class="icon">🚨</div>
+    <div>
+      <h3>Critical: Update to v2026.1.24-1 or later</h3>
+      <p>Multiple remote code execution (RCE) vulnerabilities were discovered in January 2026. If you're running an older version, update immediately.</p>
+    </div>
+  </div>
+
+  <!-- Section 1: Known Vulnerabilities -->
+  <section id="vulnerabilities" class="fade-in">
+    <div class="section-label">Critical Information</div>
+    <h2>Known <span class="accent">Vulnerabilities</span></h2>
+    <p class="section-intro">Security researchers have identified several critical vulnerabilities in OpenClaw. Here's what was found and how to protect yourself.</p>
+
+    <div class="card">
+      <h3>🔴 Critical CVEs (Patched)</h3>
+      <table class="cve-table">
+        <thead>
+          <tr><th>CVE</th><th>Description</th><th>Severity</th><th>Fixed In</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>CVE-2026-25253</code></td>
+            <td>1-click RCE via gateway URL hijack + WebSocket pivot. Visiting a malicious webpage could fully compromise the host machine.</td>
+            <td><span class="severity-critical">Critical</span></td>
+            <td>v2026.1.24-1</td>
+          </tr>
+          <tr>
+            <td><code>CVE-2026-24763</code></td>
+            <td>Command injection vulnerability in gateway request handling.</td>
+            <td><span class="severity-critical">Critical</span></td>
+            <td>v2026.1.24-1</td>
+          </tr>
+          <tr>
+            <td><code>CVE-2026-25157</code></td>
+            <td>Command injection in gateway subprocess execution.</td>
+            <td><span class="severity-critical">Critical</span></td>
+            <td>v2026.1.24-1</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>⚠️ Common Misconfigurations</h3>
+      <p>Security researchers found <strong>hundreds of exposed instances</strong> in the wild. The most common issues:</p>
+      <ul class="checklist" style="margin-top: 1rem;">
+        <li>
+          <div class="check-icon critical">!</div>
+          <div class="content">
+            <div class="title">Exposed Control UI</div>
+            <div class="desc">Gateway bound to 0.0.0.0 instead of loopback, making the admin interface accessible from the internet.</div>
+          </div>
+        </li>
+        <li>
+          <div class="check-icon critical">!</div>
+          <div class="content">
+            <div class="title">No Gateway Password</div>
+            <div class="desc">gateway.auth.mode not set, allowing unauthenticated access to the control interface.</div>
+          </div>
+        </li>
+        <li>
+          <div class="check-icon warning">!</div>
+          <div class="content">
+            <div class="title">Reverse Proxy Auth Bypass</div>
+            <div class="desc">Misconfigured proxies causing external connections to be treated as localhost (auto-trusted).</div>
+          </div>
+        </li>
+        <li>
+          <div class="check-icon warning">!</div>
+          <div class="content">
+            <div class="title">Open DM Policy</div>
+            <div class="desc">dmPolicy set to "open" allowing anyone to message and control the bot.</div>
+          </div>
+        </li>
+        <li>
+          <div class="check-icon warning">!</div>
+          <div class="content">
+            <div class="title">Plaintext Credentials</div>
+            <div class="desc">API keys and tokens stored with world-readable permissions (644 instead of 600).</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>🦠 Malicious Skills & Extensions</h3>
+      <p><strong>341 malicious skills</strong> were found in the ClawHub skills repository. Fake "Clawdbot Agent" VS Code extensions were also discovered that install trojans and remote access malware.</p>
+      <p style="margin-top: 0.75rem;"><strong>Rule:</strong> Only install skills from sources you trust. Review the code before installing.</p>
+    </div>
+  </section>
+
+  <!-- Section 2: Security Checklist -->
+  <section id="checklist" class="fade-in">
+    <div class="section-label">Quick Reference</div>
+    <h2>Security <span class="accent">Checklist</span></h2>
+    <p class="section-intro">Run through this checklist to verify your OpenClaw installation is properly secured.</p>
+
+    <div class="card">
+      <ul class="checklist">
+        <li>
+          <div class="check-icon critical">1</div>
+          <div class="content">
+            <div class="title">Update to latest version</div>
+            <div class="desc">Run <code>npm install -g openclaw</code> then restart. All versions before v2026.1.24-1 have critical RCE vulnerabilities.</div>
+          </div>
+        </li>
+        <li>
+          <div class="check-icon critical">2</div>
+          <div class="content">
+            <div class="title">Check gateway.bind setting</div>
+            <div class="desc">Should be "loopback" unless you specifically need remote access. Never expose the Control UI to the internet without auth.</div>
+          </div>
+        </li>
+        <li>
+          <div class="check-icon critical">3</div>
+          <div class="content">
+            <div class="title">Set gateway auth</div>
+            <div class="desc">Ensure gateway.auth.mode is "password" or "token", never empty. Use a strong password.</div>
+          </div>
+        </li>
+        <li>
+          <div class="check-icon warning">4</div>
+          <div class="content">
+            <div class="title">Configure reverse proxy correctly</div>
+            <div class="desc">If using nginx/Caddy/Traefik, set gateway.trustedProxies to your proxy IPs. Make sure the proxy overwrites X-Forwarded-For headers.</div>
+          </div>
+        </li>
+        <li>
+          <div class="check-icon warning">5</div>
+          <div class="content">
+            <div class="title">Lock down DM access</div>
+            <div class="desc">Use dmPolicy: "allowlist" or "pairing". Never use "open" unless you explicitly want public access.</div>
+          </div>
+        </li>
+        <li>
+          <div class="check-icon warning">6</div>
+          <div class="content">
+            <div class="title">Lock down group access</div>
+            <div class="desc">Use groupPolicy: "allowlist" with specific group IDs. Avoid "open" in production.</div>
+          </div>
+        </li>
+        <li>
+          <div class="check-icon info">7</div>
+          <div class="content">
+            <div class="title">Fix file permissions</div>
+            <div class="desc">chmod 700 ~/.openclaw && chmod 600 ~/.openclaw/credentials/*</div>
+          </div>
+        </li>
+        <li>
+          <div class="check-icon info">8</div>
+          <div class="content">
+            <div class="title">Run the built-in audit</div>
+            <div class="desc">openclaw security audit --deep (and optionally --fix to auto-apply safe guardrails)</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Section 3: Best Practices -->
+  <section id="best-practices" class="fade-in">
+    <div class="section-label">Hardening</div>
+    <h2>Best <span class="accent">Practices</span></h2>
+    <p class="section-intro">Follow these guidelines to maintain a secure OpenClaw deployment.</p>
+
+    <div class="practices-grid">
+      <div class="practice-card">
+        <div class="icon">🔒</div>
+        <h4>Use Strong Models</h4>
+        <p>Claude Opus 4.5 has the best prompt injection resistance. Avoid weak models for tool-enabled agents.</p>
+      </div>
+      <div class="practice-card">
+        <div class="icon">📦</div>
+        <h4>Enable Sandboxing</h4>
+        <p>Run exec tools in Docker containers when possible. Set tools.exec.host to "sandbox" instead of "gateway".</p>
+      </div>
+      <div class="practice-card">
+        <div class="icon">🚦</div>
+        <h4>Require Exec Approvals</h4>
+        <p>Set ask: "on-miss" or "always" in exec-approvals.json so dangerous commands require human confirmation.</p>
+      </div>
+      <div class="practice-card">
+        <div class="icon">🔑</div>
+        <h4>Scope API Keys</h4>
+        <p>Give each service the minimum permissions needed. Use read-only keys where possible.</p>
+      </div>
+      <div class="practice-card">
+        <div class="icon">👥</div>
+        <h4>Isolate Sessions</h4>
+        <p>Set session.dmScope: "per-channel-peer" to prevent cross-user context leakage in multi-user setups.</p>
+      </div>
+      <div class="practice-card">
+        <div class="icon">🔄</div>
+        <h4>Keep Updated</h4>
+        <p>Check for updates monthly. Run openclaw security audit regularly, especially after config changes.</p>
+      </div>
+      <div class="practice-card">
+        <div class="icon">📋</div>
+        <h4>Review Skills</h4>
+        <p>Don't install skills from ClawHub blindly. Review the code first. 341 malicious skills were found.</p>
+      </div>
+      <div class="practice-card">
+        <div class="icon">🔐</div>
+        <h4>Protect Your Accounts</h4>
+        <p>Enable 2FA on Telegram/Discord/etc. The allowlist is only as strong as the account behind it.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Audit Prompt -->
+  <section id="audit-prompt" class="fade-in">
+    <div class="section-label">Self-Service</div>
+    <h2>Security <span class="accent">Audit Prompt</span></h2>
+    <p class="section-intro">Copy this prompt and send it to your OpenClaw agent. It will run a full security audit and fix any issues found.</p>
+
+    <div class="prompt-box">
+      <h3>
+        📋 Copy & Paste to Your Agent
+        <button class="copy-btn" onclick="copyPrompt()">Copy</button>
+      </h3>
+      <div class="prompt-content" id="audit-prompt-text">Run a full security audit on this OpenClaw instance and fix any issues found. Check these critical areas:
+
+1. **VERSION CHECK**
+   - Run `openclaw --version` and compare to latest (`npm view openclaw version`)
+   - If below v2026.1.24-1, update IMMEDIATELY — critical RCE vulnerabilities (CVE-2026-25253, CVE-2026-24763, CVE-2026-25157)
+   - Update via: `npm install -g openclaw` then restart gateway
+
+2. **NETWORK EXPOSURE**
+   - Check `gateway.bind` — should be "loopback" unless you specifically need remote access
+   - Check `gateway.auth.mode` — should be "password" or "token", never empty
+   - If using a reverse proxy, verify `gateway.trustedProxies` is set correctly
+   - Run `netstat -an | grep LISTEN` to confirm no unexpected external ports
+
+3. **ACCESS CONTROL**
+   - Check `dmPolicy` — should be "allowlist" or "pairing", NOT "open" unless intentional
+   - Check `groupPolicy` — should be "allowlist", NOT "open" unless intentional
+   - Verify `allowFrom` lists only trusted user IDs
+   - Consider `session.dmScope: "per-channel-peer"` for multi-user isolation
+
+4. **FILE PERMISSIONS**
+   - Run: `ls -la ~/.openclaw/` — directory should be 700
+   - Run: `ls -la ~/.openclaw/credentials/` — all files should be 600
+   - Fix with: `chmod 700 ~/.openclaw && chmod 600 ~/.openclaw/credentials/*`
+   - Check config files (openclaw.json) are 600
+
+5. **EXEC & SANDBOX** (evaluate based on machine purpose)
+   - Dedicated OpenClaw machine with nothing sensitive? Open exec is acceptable
+   - Shared machine or sensitive data? Enable sandboxing and exec approvals
+   - Check `exec-approvals.json` for current policy
+
+6. **RUN THE BUILT-IN AUDIT**
+   - `openclaw security audit --deep`
+   - `openclaw security audit --fix` to auto-apply safe guardrails
+
+After checking, provide:
+- Summary of findings (passed/failed/accepted risks)
+- List of fixes applied
+- Any remaining recommendations
+
+For dedicated autonomous machines, some risks (sandbox off, exec approvals open) may be intentionally accepted — note these as "accepted risk" rather than failures.</div>
+    </div>
+  </section>
+
+  <!-- Section 5: Get Report Card -->
+  <section id="report-card" class="fade-in">
+    <div class="report-card-promo">
+      <div class="grade">A-</div>
+      <h3>Get Your Own Security Report Card</h3>
+      <p>Want a beautiful, detailed security report like this one? Send the audit prompt above to your OpenClaw agent, then ask it to create an HTML report card.</p>
+      <a href="security-report.html" class="btn">View Example Report Card →</a>
+    </div>
+
+    <div class="card">
+      <h3>📝 Report Card Prompt</h3>
+      <p>After running the audit, send this to get a formatted report:</p>
+      <div class="code-block">
+        <span class="lang">prompt</span>
+        <pre>Create a beautiful HTML security report card based on the audit results. Include:
+- Overall grade (A-F)
+- Passed checks with green badges
+- Accepted risks with yellow badges
+- What was fixed during the audit
+- Ongoing recommendations
+- Sources cited
+
+Make it dark-themed with a modern design. Save it as security-report.html</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sources -->
+  <div class="sources fade-in">
+    <h3>Security Research Sources</h3>
+    <div class="source-grid">
+      <a class="source-link" href="https://www.tenable.com/blog/agentic-ai-security-how-to-mitigate-clawdbot-moltbot-openclaw-vulnerabilities" target="_blank">
+        <span class="org">Tenable</span>
+        OpenClaw Vulnerabilities & Mitigations
+      </a>
+      <a class="source-link" href="https://depthfirst.com/post/1-click-rce-to-steal-your-moltbot-data-and-keys" target="_blank">
+        <span class="org">depthfirst</span>
+        1-Click RCE Technical Analysis
+      </a>
+      <a class="source-link" href="https://www.bitdefender.com/en-us/blog/hotforsecurity/moltbot-security-alert-exposed-clawdbot-control-panels-risk-credential-leaks-and-account-takeovers" target="_blank">
+        <span class="org">Bitdefender</span>
+        Exposed Control Panels Alert
+      </a>
+      <a class="source-link" href="https://www.securityweek.com/vulnerability-allows-hackers-to-hijack-openclaw-ai-assistant/" target="_blank">
+        <span class="org">SecurityWeek</span>
+        Gateway Hijack Vulnerability
+      </a>
+      <a class="source-link" href="https://docs.openclaw.ai/gateway/security" target="_blank">
+        <span class="org">OpenClaw Docs</span>
+        Official Security Guide
+      </a>
+      <a class="source-link" href="https://www.theregister.com/2026/01/27/clawdbot_moltbot_security_concerns/" target="_blank">
+        <span class="org">The Register</span>
+        Security Concerns Overview
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    <p>Created by <a href="https://openclawinstall.net" target="_blank">OpenClaw Install</a> — openclawinstall.net</p>
+  </footer>
+
+</div>
+
+<script>
+  // Fade-in animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Copy prompt function
+  function copyPrompt() {
+    const text = document.getElementById('audit-prompt-text').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 2000);
+    });
+  }
+</script>
+
+</body>
+</html>
