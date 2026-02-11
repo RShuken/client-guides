@@ -57,6 +57,84 @@
     <h1>Vishnu Work Done Log</h1>
     <div class="date">Tracking all work performed on Ian Ferguson's Vishnu AI Assistant</div>
 
+    <!-- ─── Feb 10: OpenClaw Upgrade + Opus 4.6 ─── -->
+    <details class="work-item" open>
+        <summary>
+            <span class="work-date">Feb 10, 2026 — 10:15 PM</span>
+            <span class="work-title">🚀 Upgraded to OpenClaw + Claude Opus 4.6</span>
+            <span class="badge badge-setup">UPGRADE</span>
+        </summary>
+        <div class="details-body">
+            <h4>Problem</h4>
+            <p>All models stopped working. Vishnu was showing <strong>"Unknown model: anthropic/claude-opus-4-6"</strong> errors — the old <code>clawdbot</code> package (v2026.1.24-3) didn't support the newest Claude model.</p>
+
+            <h4>Root Cause</h4>
+            <p>The config was set to use <code>claude-opus-4-6</code> (Claude Opus 4.6), but the installed package was too old to recognize this model. The package name also changed from <code>clawdbot</code> to <code>openclaw</code>.</p>
+
+            <h4>Fix Applied</h4>
+            <div class="code-block">
+                <strong>Step 1: Install new package</strong><br>
+                <span class="command">npm install -g openclaw@latest</span> &nbsp;# v2026.2.9<br><br>
+
+                <strong>Step 2: Stop old service</strong><br>
+                <span class="command">clawdbot gateway stop</span><br><br>
+
+                <strong>Step 3: Migrate config</strong><br>
+                <span class="command">mkdir -p ~/.openclaw</span><br>
+                <span class="command">cp -r ~/.clawdbot/* ~/.openclaw/</span><br>
+                <span class="command">mv ~/.openclaw/clawdbot.json ~/.openclaw/openclaw.json</span><br><br>
+
+                <strong>Step 4: Install new gateway service</strong><br>
+                <span class="command">openclaw gateway install</span><br><br>
+
+                <strong>Step 5: Cleanup old service</strong><br>
+                <span class="command">launchctl bootout gui/501/com.clawdbot.gateway</span><br>
+                <span class="command">rm ~/Library/LaunchAgents/com.clawdbot.gateway.plist</span>
+            </div>
+
+            <h4>What Changed</h4>
+            <table style="width:100%; border-collapse: collapse; margin: 10px 0;">
+                <tr style="background: #f8f9fa;">
+                    <th style="text-align:left; padding: 8px; border: 1px solid #ddd;">Before</th>
+                    <th style="text-align:left; padding: 8px; border: 1px solid #ddd;">After</th>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><code>clawdbot</code> v2026.1.24-3</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><code>openclaw</code> v2026.2.9</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">Claude Opus 4.5</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><strong>Claude Opus 4.6</strong> (newest)</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><code>~/.clawdbot/</code></td>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><code>~/.openclaw/</code></td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><code>com.clawdbot.gateway</code></td>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><code>ai.openclaw.gateway</code></td>
+                </tr>
+            </table>
+
+            <h4>Result</h4>
+            <ul>
+                <li>✅ OpenClaw v2026.2.9 installed (latest)</li>
+                <li>✅ Claude Opus 4.6 now active (newest model)</li>
+                <li>✅ All config and sessions preserved</li>
+                <li>✅ Old clawdbot service removed</li>
+                <li>✅ Gateway running with 200k context window</li>
+            </ul>
+
+            <h4>New Commands Reference</h4>
+            <div class="code-block">
+                <span class="command">openclaw status</span> &nbsp;# Check overall status<br>
+                <span class="command">openclaw gateway status</span> &nbsp;# Check gateway<br>
+                <span class="command">openclaw gateway restart</span> &nbsp;# Restart if needed<br>
+                <span class="command">openclaw config get</span> &nbsp;# View config
+            </div>
+        </div>
+    </details>
+
     <!-- ─── Feb 3: Context Overflow Fix ─── -->
     <details class="work-item" open>
         <summary>
@@ -159,10 +237,11 @@
 
             <h4>Configuration</h4>
             <ul>
-                <li><strong>Primary Model:</strong> Claude Opus 4.5</li>
-                <li><strong>Fallback Chain:</strong> Opus 4.5 → Sonnet 4 → Gemini 3 Pro → GPT-4o</li>
+                <li><strong>Primary Model:</strong> Claude Opus 4.6 <em>(upgraded Feb 10)</em></li>
+                <li><strong>Fallback Chain:</strong> Opus 4.6 → Sonnet 4 → Gemini 3 Pro → GPT-4o</li>
                 <li><strong>API Tier:</strong> Tier 2 ($60) — 450k tokens/min, 1k requests/min</li>
                 <li><strong>Features:</strong> Web search, browser, heartbeat, nightshift, memory, multi-provider failover</li>
+                <li><strong>Package:</strong> OpenClaw v2026.2.9 <em>(upgraded from clawdbot Feb 10)</em></li>
             </ul>
         </div>
     </details>
