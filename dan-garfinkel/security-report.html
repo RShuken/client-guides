@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini Security Report Card — OpenClaw Audit</title>
+  <style>
+    :root {
+      --bg: #0a0e17;
+      --surface: #111827;
+      --surface2: #1a2332;
+      --border: #1e293b;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --green: #10b981;
+      --green-bg: rgba(16, 185, 129, 0.08);
+      --green-border: rgba(16, 185, 129, 0.2);
+      --yellow: #f59e0b;
+      --yellow-bg: rgba(245, 158, 11, 0.08);
+      --yellow-border: rgba(245, 158, 11, 0.2);
+      --red: #ef4444;
+      --red-bg: rgba(239, 68, 68, 0.08);
+      --red-border: rgba(239, 68, 68, 0.2);
+      --blue: #3b82f6;
+      --purple: #a855f7;
+      --accent: #6366f1;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header {
+      text-align: center;
+      padding: 3rem 0 2rem;
+    }
+
+    .header .shield {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, var(--yellow), var(--red));
+      margin-bottom: 1.5rem;
+      font-size: 2.2rem;
+      box-shadow: 0 0 40px rgba(245, 158, 11, 0.3);
+    }
+
+    .header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #fff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header .meta {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+
+    .header .meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .header .meta .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--yellow);
+      display: inline-block;
+    }
+
+    .grade-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      margin: 2rem 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .grade-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--red), var(--yellow), var(--green));
+    }
+
+    .grade-letter {
+      font-size: 5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--yellow), #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.1;
+    }
+
+    .grade-label {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+
+    .grade-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      max-width: 600px;
+      margin: 1rem auto 0;
+      line-height: 1.6;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    .stat-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .stat-number.green { color: var(--green); }
+    .stat-number.yellow { color: var(--yellow); }
+    .stat-number.red { color: var(--red); }
+    .stat-number.blue { color: var(--blue); }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 0.3rem;
+    }
+
+    .section {
+      margin: 2rem 0;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text);
+    }
+
+    .finding {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .finding:hover {
+      border-color: rgba(99, 102, 241, 0.3);
+    }
+
+    .finding-header {
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .finding-header:hover {
+      background: var(--surface2);
+    }
+
+    .finding-badge {
+      padding: 0.2rem 0.7rem;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .badge-pass {
+      background: var(--green-bg);
+      border: 1px solid var(--green-border);
+      color: var(--green);
+    }
+
+    .badge-critical {
+      background: var(--red-bg);
+      border: 1px solid var(--red-border);
+      color: var(--red);
+    }
+
+    .badge-warn {
+      background: var(--yellow-bg);
+      border: 1px solid var(--yellow-border);
+      color: var(--yellow);
+    }
+
+    .finding-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      flex: 1;
+    }
+
+    .finding-chevron {
+      color: var(--text-muted);
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+
+    .finding.open .finding-chevron {
+      transform: rotate(180deg);
+    }
+
+    .finding-body {
+      display: none;
+      padding: 0 1.5rem 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .finding.open .finding-body {
+      display: block;
+      padding-top: 1.25rem;
+    }
+
+    .finding-body p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .finding-body strong {
+      color: var(--text);
+    }
+
+    .audit-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+
+    .audit-table th {
+      text-align: left;
+      padding: 0.6rem 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .audit-table td {
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid rgba(30, 41, 59, 0.5);
+      color: var(--text-muted);
+    }
+
+    .audit-table code {
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--accent);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    .check { color: var(--green); }
+    .warn { color: var(--yellow); }
+    .fail { color: var(--red); }
+
+    .rec-list {
+      list-style: none;
+    }
+
+    .rec-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(30, 41, 59, 0.3);
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .rec-list li:last-child { border-bottom: none; }
+
+    .rec-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--red);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .rec-num.yellow {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--yellow);
+    }
+
+    .footer {
+      text-align: center;
+      padding: 3rem 0 1rem;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    .footer .molty {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    @media (max-width: 640px) {
+      .container { padding: 1rem; }
+      .header h1 { font-size: 1.6rem; }
+      .grade-letter { font-size: 3.5rem; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .header .meta { flex-direction: column; align-items: center; gap: 0.5rem; }
+    }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+
+  <header class="header">
+    <div class="shield">🛡️</div>
+    <h1>Mini Security Report Card</h1>
+    <div class="meta">
+      <span><span class="dot"></span> Clawdbot v2026.1.24-3</span>
+      <span>📅 February 11, 2026</span>
+      <span>🔧 Audited by Molty</span>
+    </div>
+  </header>
+
+  <div class="grade-card">
+    <div class="grade-letter">B-</div>
+    <div class="grade-label">Security Score: 68/100</div>
+    <p class="grade-desc">
+      Mini has basic protections in place (firewall, restricted SSH) but has critical vulnerabilities
+      that need immediate attention. Active brute-force attacks were detected during the audit.
+    </p>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="stat-number green">5</div>
+      <div class="stat-label">Checks Passed</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number red">3</div>
+      <div class="stat-label">Critical Issues</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number yellow">4</div>
+      <div class="stat-label">Medium Issues</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number blue">1</div>
+      <div class="stat-label">Fixed Today</div>
+    </div>
+  </div>
+
+  <!-- Critical Issues -->
+  <div class="section">
+    <h2 class="section-title">🔴 Critical Issues — Fix Immediately</h2>
+
+    <div class="finding" onclick="this.classList.toggle('open')">
+      <div class="finding-header">
+        <span class="finding-badge badge-critical">Critical</span>
+        <span class="finding-name">Password Authentication Enabled</span>
+        <span class="finding-chevron">▼</span>
+      </div>
+      <div class="finding-body">
+        <p><strong>Current Status:</strong> <code>PasswordAuthentication yes</code> in sshd_config</p>
+        <p><strong>Risk:</strong> Brute force attacks are actively hitting your server. Multiple IPs detected attempting password login.</p>
+        <p><strong>Evidence:</strong></p>
+        <table class="audit-table">
+          <tr><td>198.46.146.200</td><td>Failed password for root</td></tr>
+          <tr><td>176.120.22.47</td><td>Failed password for root</td></tr>
+          <tr><td>159.223.57.213</td><td>Failed password for invalid user</td></tr>
+          <tr><td>103.206.172.4</td><td>Failed password for root</td></tr>
+        </table>
+        <p><strong>Fix:</strong> Set <code>PasswordAuthentication no</code> in <code>/etc/ssh/sshd_config</code> and restart sshd.</p>
+      </div>
+    </div>
+
+    <div class="finding" onclick="this.classList.toggle('open')">
+      <div class="finding-header">
+        <span class="finding-badge badge-critical">Critical</span>
+        <span class="finding-name">Root SSH Login Allowed</span>
+        <span class="finding-chevron">▼</span>
+      </div>
+      <div class="finding-body">
+        <p><strong>Current Status:</strong> <code>PermitRootLogin yes</code></p>
+        <p><strong>Risk:</strong> If root password is compromised, attacker gets full system access immediately.</p>
+        <p><strong>Fix:</strong> Set <code>PermitRootLogin no</code> or <code>prohibit-password</code>. Use the <code>dgarfink</code> account with sudo instead.</p>
+      </div>
+    </div>
+
+    <div class="finding" onclick="this.classList.toggle('open')">
+      <div class="finding-header">
+        <span class="finding-badge badge-critical">Critical</span>
+        <span class="finding-name">fail2ban Not Active</span>
+        <span class="finding-chevron">▼</span>
+      </div>
+      <div class="finding-body">
+        <p><strong>Current Status:</strong> fail2ban is not installed or not running.</p>
+        <p><strong>Risk:</strong> No automatic blocking of attacking IPs. Brute force attempts can continue indefinitely.</p>
+        <p><strong>Fix:</strong> Install and configure fail2ban:</p>
+        <table class="audit-table">
+          <tr><td><code>apt install fail2ban</code></td></tr>
+          <tr><td><code>systemctl enable fail2ban</code></td></tr>
+          <tr><td><code>systemctl start fail2ban</code></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Medium Issues -->
+  <div class="section">
+    <h2 class="section-title">🟡 Medium Issues</h2>
+
+    <div class="finding" onclick="this.classList.toggle('open')">
+      <div class="finding-header">
+        <span class="finding-badge badge-warn">Medium</span>
+        <span class="finding-name">X11 Forwarding Enabled</span>
+        <span class="finding-chevron">▼</span>
+      </div>
+      <div class="finding-body">
+        <p><strong>Current Status:</strong> <code>X11Forwarding yes</code></p>
+        <p><strong>Risk:</strong> Potential X11 session hijacking if an attacker gains SSH access.</p>
+        <p><strong>Fix:</strong> Set <code>X11Forwarding no</code> in sshd_config (not needed for a headless server).</p>
+      </div>
+    </div>
+
+    <div class="finding" onclick="this.classList.toggle('open')">
+      <div class="finding-header">
+        <span class="finding-badge badge-warn">Medium</span>
+        <span class="finding-name">Config Files World-Readable</span>
+        <span class="finding-chevron">▼</span>
+      </div>
+      <div class="finding-body">
+        <p><strong>Current Status:</strong> <code>clawdbot.json</code> has 644 permissions (world-readable).</p>
+        <p><strong>Risk:</strong> Any local user could read API keys and tokens.</p>
+        <p><strong>Fix:</strong> <code>chmod 600 ~/.clawdbot/clawdbot.json</code></p>
+      </div>
+    </div>
+
+    <div class="finding" onclick="this.classList.toggle('open')">
+      <div class="finding-header">
+        <span class="finding-badge badge-warn">Medium</span>
+        <span class="finding-name">fluent-bit Exposed</span>
+        <span class="finding-chevron">▼</span>
+      </div>
+      <div class="finding-body">
+        <p><strong>Current Status:</strong> GCP logging agent listening on <code>0.0.0.0:20202</code></p>
+        <p><strong>Risk:</strong> Service accessible from internet, potential information leak.</p>
+        <p><strong>Fix:</strong> Restrict to localhost or add UFW rule to block external access.</p>
+      </div>
+    </div>
+
+    <div class="finding" onclick="this.classList.toggle('open')">
+      <div class="finding-header">
+        <span class="finding-badge badge-warn">Medium</span>
+        <span class="finding-name">exim4 Mail Server Running</span>
+        <span class="finding-chevron">▼</span>
+      </div>
+      <div class="finding-body">
+        <p><strong>Current Status:</strong> exim4 mail server is running but likely not needed.</p>
+        <p><strong>Risk:</strong> Unnecessary attack surface, mail servers are frequent targets.</p>
+        <p><strong>Fix:</strong> If not needed, disable: <code>systemctl disable exim4 && systemctl stop exim4</code></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Passed Checks -->
+  <div class="section">
+    <h2 class="section-title">🟢 Passed Checks</h2>
+
+    <div class="finding" onclick="this.classList.toggle('open')">
+      <div class="finding-header">
+        <span class="finding-badge badge-pass">Pass</span>
+        <span class="finding-name">UFW Firewall Active</span>
+        <span class="finding-chevron">▼</span>
+      </div>
+      <div class="finding-body">
+        <table class="audit-table">
+          <thead><tr><th>Rule</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><code>22/tcp from 172.59.229.78</code></td><td>SSH restricted to Ryan's IP</td></tr>
+            <tr><td><code>35.191.0.0/16</code></td><td>GCP health checks</td></tr>
+            <tr><td><code>130.211.0.0/22</code></td><td>GCP load balancers</td></tr>
+            <tr><td><code>35.235.240.0/20</code></td><td>GCP IAP SSH</td></tr>
+          </tbody>
+        </table>
+        <p>Default policy: deny incoming, allow outgoing.</p>
+      </div>
+    </div>
+
+    <div class="finding" onclick="this.classList.toggle('open')">
+      <div class="finding-header">
+        <span class="finding-badge badge-pass">Pass</span>
+        <span class="finding-name">SSH Key Authentication</span>
+        <span class="finding-chevron">▼</span>
+      </div>
+      <div class="finding-body">
+        <p>SSH keys are configured for both root and dgarfink accounts. Ryan's key is installed.</p>
+      </div>
+    </div>
+
+    <div class="finding" onclick="this.classList.toggle('open')">
+      <div class="finding-header">
+        <span class="finding-badge badge-pass">Pass</span>
+        <span class="finding-name">Credentials Folder Permissions</span>
+        <span class="finding-chevron">▼</span>
+      </div>
+      <div class="finding-body">
+        <p><code>~/.clawdbot/credentials/</code> has 700 permissions — only owner can access.</p>
+      </div>
+    </div>
+
+    <div class="finding" onclick="this.classList.toggle('open')">
+      <div class="finding-header">
+        <span class="finding-badge badge-pass">Pass</span>
+        <span class="finding-name">Unattended Security Upgrades</span>
+        <span class="finding-chevron">▼</span>
+      </div>
+      <div class="finding-body">
+        <p><code>unattended-upgrades</code> package is installed. Security patches applied automatically.</p>
+      </div>
+    </div>
+
+    <div class="finding" onclick="this.classList.toggle('open')">
+      <div class="finding-header">
+        <span class="finding-badge badge-pass">Pass</span>
+        <span class="finding-name">Gateway Localhost Only</span>
+        <span class="finding-chevron">▼</span>
+      </div>
+      <div class="finding-body">
+        <table class="audit-table">
+          <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td><code>gateway.bind</code></td><td>loopback</td></tr>
+            <tr><td><code>gateway.mode</code></td><td>local</td></tr>
+            <tr><td><code>gateway.auth.mode</code></td><td>token</td></tr>
+            <tr><td>Tailscale</td><td>off</td></tr>
+          </tbody>
+        </table>
+        <p>Gateway cannot be accessed from external network — good!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recommendations -->
+  <div class="section">
+    <h2 class="section-title">📋 Priority Actions</h2>
+    <ul class="rec-list">
+      <li>
+        <span class="rec-num">1</span>
+        <span><strong>Disable password authentication</strong> — attackers are actively probing. Set <code>PasswordAuthentication no</code>.</span>
+      </li>
+      <li>
+        <span class="rec-num">2</span>
+        <span><strong>Disable root SSH login</strong> — use dgarfink with sudo. Set <code>PermitRootLogin no</code>.</span>
+      </li>
+      <li>
+        <span class="rec-num">3</span>
+        <span><strong>Install fail2ban</strong> — auto-ban attacking IPs after failed attempts.</span>
+      </li>
+      <li>
+        <span class="rec-num yellow">4</span>
+        <span><strong>Fix config permissions</strong> — <code>chmod 600 ~/.clawdbot/clawdbot.json</code></span>
+      </li>
+      <li>
+        <span class="rec-num yellow">5</span>
+        <span><strong>Add swap file</strong> — prevent OOM during package updates (2GB RAM is tight).</span>
+      </li>
+      <li>
+        <span class="rec-num yellow">6</span>
+        <span><strong>Upgrade clawdbot</strong> — running 2026.1.24-3, latest is 2026.2.x.</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    <p>Generated by <span class="molty">🔧 Molty</span> · Mini Security Audit · February 11, 2026</p>
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Work Done - Dan Garfinkel Project</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 40px; line-height: 1.6; max-width: 900px; margin: 40px auto; background: #f8fafc; color: #1e293b; }
+        h1 { color: #1e1b4b; }
+        h2 { color: #334155; border-bottom: 2px solid #6366f1; padding-bottom: 5px; }
+        .date { color: #64748b; font-style: italic; margin-bottom: 24px; }
+        .section { margin: 20px 0; }
+        .code-block { background-color: #1e293b; border-left: 4px solid #6366f1; padding: 16px; margin: 10px 0; font-size: 0.9em; overflow-x: auto; border-radius: 8px; color: #e2e8f0; }
+        .command { font-family: 'SF Mono', 'Fira Code', monospace; background-color: #0f172a; color: #a5b4fc; padding: 2px 6px; border-radius: 4px; }
+        code { background: #e0e7ff; color: #4338ca; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+
+        .work-item { border: 1px solid #e2e8f0; margin: 15px 0; border-radius: 12px; overflow: hidden; background: #fff; }
+        .work-item summary {
+            padding: 18px;
+            cursor: pointer;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .work-item summary::-webkit-details-marker { display: none; }
+        .work-item summary::before {
+            content: '▶';
+            font-size: 0.7em;
+            transition: transform 0.2s;
+            flex-shrink: 0;
+            color: #6366f1;
+        }
+        .work-item[open] summary::before { transform: rotate(90deg); }
+        .work-item[open] summary { border-bottom: 1px solid #e2e8f0; }
+        .work-item .details-body { padding: 20px; }
+        .work-date { font-weight: bold; color: #6366f1; font-size: 0.85em; white-space: nowrap; }
+        .work-title { font-weight: 600; color: #1e1b4b; font-size: 1.05em; }
+
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 0.75em; font-weight: 600; }
+        .badge-fix { background: #fee2e2; color: #991b1b; }
+        .badge-config { background: #dbeafe; color: #1e40af; }
+        .badge-setup { background: #d1fae5; color: #065f46; }
+        .badge-security { background: #fef3c7; color: #92400e; }
+
+        table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+        th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #e2e8f0; }
+        th { background: #f1f5f9; color: #475569; font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        ul { margin: 12px 0; padding-left: 24px; }
+        li { margin: 8px 0; }
+
+        .status-good { color: #16a34a; }
+        .status-bad { color: #dc2626; }
+
+        @media (max-width: 640px) {
+            body { margin: 16px; }
+            .work-item summary { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Mini Work Done Log</h1>
+    <div class="date">Tracking all work performed on Dan Garfinkel's Mini AI Help Desk</div>
+
+    <!-- Feb 11: Security Audit -->
+    <details class="work-item" open>
+        <summary>
+            <span class="work-date">Feb 11, 2026 — 6:06 PM MST</span>
+            <span class="work-title">🛡️ Security Audit Completed</span>
+            <span class="badge badge-security">SECURITY</span>
+        </summary>
+        <div class="details-body">
+            <h4>Audit Performed</h4>
+            <p>Comprehensive security scan of the GCP server. Identified critical vulnerabilities and documented all findings.</p>
+
+            <h4>Critical Issues Found</h4>
+            <table>
+                <tr>
+                    <th>Issue</th>
+                    <th>Status</th>
+                    <th>Risk</th>
+                </tr>
+                <tr>
+                    <td>Password authentication enabled</td>
+                    <td class="status-bad">❌ Vulnerable</td>
+                    <td>Active brute-force attacks detected</td>
+                </tr>
+                <tr>
+                    <td>Root SSH login allowed</td>
+                    <td class="status-bad">❌ Vulnerable</td>
+                    <td>Direct root access if password compromised</td>
+                </tr>
+                <tr>
+                    <td>fail2ban not active</td>
+                    <td class="status-bad">❌ Not installed</td>
+                    <td>No automatic blocking of attackers</td>
+                </tr>
+            </table>
+
+            <h4>What's Working Well</h4>
+            <ul>
+                <li>✅ UFW firewall active with SSH restricted to Ryan's IP</li>
+                <li>✅ SSH key authentication configured</li>
+                <li>✅ Credentials folder has proper permissions (700)</li>
+                <li>✅ Unattended security upgrades installed</li>
+                <li>✅ Gateway bound to localhost only</li>
+            </ul>
+
+            <h4>Overall Grade: B- (68/100)</h4>
+            <p>See <a href="security-report.html">full security report</a> for detailed findings and recommendations.</p>
+        </div>
+    </details>
+
+    <!-- Feb 11: Anthropic Integration -->
+    <details class="work-item" open>
+        <summary>
+            <span class="work-date">Feb 11, 2026 — 6:02 PM MST</span>
+            <span class="work-title">🤖 Anthropic Integration + Fallback System</span>
+            <span class="badge badge-config">CONFIG</span>
+        </summary>
+        <div class="details-body">
+            <h4>Problem</h4>
+            <p>Anthropic API key was invalid (401 authentication error). Mini couldn't use Claude models.</p>
+
+            <h4>Solution</h4>
+            <p>Ryan provided a valid Anthropic API key. Configured fallback system with Claude as primary and Groq as backup.</p>
+
+            <h4>Configuration Applied</h4>
+            <div class="code-block">
+                <strong>Primary Model:</strong> anthropic/claude-sonnet-4-5<br>
+                <strong>Fallback:</strong> groq/llama-3.3-70b-versatile<br><br>
+                <strong>Auth profiles updated in:</strong><br>
+                <span class="command">/home/dgarfink/.clawdbot/agents/main/agent/auth-profiles.json</span>
+            </div>
+
+            <h4>Result</h4>
+            <ul>
+                <li>✅ Claude Sonnet 4.5 now active as primary model</li>
+                <li>✅ Groq Llama 3.3 70B as automatic fallback</li>
+                <li>✅ Gateway restarted and verified working</li>
+            </ul>
+        </div>
+    </details>
+
+    <!-- Feb 11: Agent Auth Fix -->
+    <details class="work-item" open>
+        <summary>
+            <span class="work-date">Feb 11, 2026 — 5:55 PM MST</span>
+            <span class="work-title">🔧 Agent Auth Profiles Fix</span>
+            <span class="badge badge-fix">FIX</span>
+        </summary>
+        <div class="details-body">
+            <h4>Problem</h4>
+            <p>Mini was showing "No API key found for provider groq" errors despite the Groq key existing in the main credentials folder.</p>
+
+            <h4>Root Cause</h4>
+            <p>The agent has its own separate <code>auth-profiles.json</code> file that wasn't updated. The main credentials folder and the agent's auth profiles are different locations.</p>
+
+            <h4>Fix Applied</h4>
+            <div class="code-block">
+                <strong>Location:</strong> /home/dgarfink/.clawdbot/agents/main/agent/auth-profiles.json<br><br>
+                <strong>Added:</strong> Groq credentials to agent's auth store<br>
+                <strong>Added:</strong> Anthropic credentials to agent's auth store
+            </div>
+
+            <h4>Result</h4>
+            <p>Gateway restarted successfully with both API keys available to the agent.</p>
+        </div>
+    </details>
+
+    <!-- Feb 11: Model Switch -->
+    <details class="work-item">
+        <summary>
+            <span class="work-date">Feb 11, 2026 — 4:45 PM MST</span>
+            <span class="work-title">🔄 Temporary Model Switch to Groq</span>
+            <span class="badge badge-config">CONFIG</span>
+        </summary>
+        <div class="details-body">
+            <h4>Problem</h4>
+            <p>Dan's system was configured to use <code>anthropic/claude-opus-4-6</code> but had no Anthropic API key.</p>
+
+            <h4>API Key Audit Results</h4>
+            <table>
+                <tr>
+                    <th>Provider</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td>Groq</td>
+                    <td class="status-good">✅ Configured</td>
+                </tr>
+                <tr>
+                    <td>Anthropic</td>
+                    <td class="status-bad">❌ Missing</td>
+                </tr>
+                <tr>
+                    <td>OpenAI</td>
+                    <td class="status-bad">❌ Missing</td>
+                </tr>
+            </table>
+
+            <h4>Temporary Fix</h4>
+            <p>Switched model to <code>groq/llama-3.3-70b-versatile</code> until Anthropic key could be added.</p>
+        </div>
+    </details>
+
+    <!-- Feb 11: Telegram Configuration -->
+    <details class="work-item">
+        <summary>
+            <span class="work-date">Feb 11, 2026 — 4:30 PM MST</span>
+            <span class="work-title">📱 Telegram Bot Configuration</span>
+            <span class="badge badge-setup">SETUP</span>
+        </summary>
+        <div class="details-body">
+            <h4>Work Completed</h4>
+            <ul>
+                <li>Fixed Telegram config format (<code>botToken</code> key instead of <code>token</code>)</li>
+                <li>Added bot token for <code>@mini1985_bot</code></li>
+                <li>Configured help desk group (<code>-5113089373</code>)</li>
+                <li>Set <code>requireMention: false</code> for automatic responses in group</li>
+                <li>Approved Dan's Telegram pairing (user ID 8333923795, code QC2W4LVU)</li>
+            </ul>
+
+            <h4>Configuration</h4>
+            <div class="code-block">
+                <strong>Bot:</strong> @mini1985_bot<br>
+                <strong>DM Policy:</strong> pairing (requires approval)<br>
+                <strong>Group Policy:</strong> open<br>
+                <strong>Help Desk Group:</strong> -5113089373 (responds to all messages)
+            </div>
+        </div>
+    </details>
+
+    <!-- Feb 11: Initial Setup -->
+    <details class="work-item">
+        <summary>
+            <span class="work-date">Feb 11, 2026 — 4:00 PM MST</span>
+            <span class="work-title">🚀 Initial SSH Access & Firewall Setup</span>
+            <span class="badge badge-setup">SETUP</span>
+        </summary>
+        <div class="details-body">
+            <h4>Work Completed</h4>
+            <ul>
+                <li>Established SSH access as root to <code>136.113.136.98</code></li>
+                <li>Added Ryan's SSH key to root and dgarfink accounts</li>
+                <li>Configured UFW firewall</li>
+                <li>Restricted SSH to Ryan's IP only (172.59.229.78)</li>
+                <li>Allowed GCP health check ranges</li>
+            </ul>
+
+            <h4>Firewall Rules Applied</h4>
+            <div class="code-block">
+                <span class="command">ufw allow from 172.59.229.78 to any port 22</span> # Ryan SSH<br>
+                <span class="command">ufw allow from 35.191.0.0/16</span> # GCP health checks<br>
+                <span class="command">ufw allow from 130.211.0.0/22</span> # GCP load balancers<br>
+                <span class="command">ufw allow from 35.235.240.0/20 to any port 22</span> # GCP IAP SSH<br>
+                <span class="command">ufw default deny incoming</span><br>
+                <span class="command">ufw enable</span>
+            </div>
+
+            <h4>Server Details</h4>
+            <table>
+                <tr><td>Platform</td><td>Google Cloud Platform (GCP)</td></tr>
+                <tr><td>OS</td><td>Debian Linux 6.1.0-42-cloud-amd64</td></tr>
+                <tr><td>RAM</td><td>2GB (no swap)</td></tr>
+                <tr><td>User</td><td>dgarfink (runs clawdbot)</td></tr>
+            </table>
+        </div>
+    </details>
+
+    <div class="section">
+        <h2>System Summary</h2>
+        <table>
+            <tr><td><strong>Bot Name</strong></td><td>Mini (@mini1985_bot)</td></tr>
+            <tr><td><strong>Primary Model</strong></td><td>anthropic/claude-sonnet-4-5</td></tr>
+            <tr><td><strong>Fallback Model</strong></td><td>groq/llama-3.3-70b-versatile</td></tr>
+            <tr><td><strong>Clawdbot Version</strong></td><td>2026.1.24-3</td></tr>
+            <tr><td><strong>Channels</strong></td><td>Telegram, WhatsApp</td></tr>
+            <tr><td><strong>Tools Enabled</strong></td><td>Web Search (Brave), Web Fetch, Audio Transcription (Whisper)</td></tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Related Documents</h2>
+        <ul>
+            <li><a href="guide.html">Getting Started Guide</a> — How to use Mini</li>
+            <li><a href="security-report.html">Security Report Card</a> — Full security audit</li>
+        </ul>
+    </div>
+
+    <div style="text-align: center; margin-top: 48px; color: #64748b; font-size: 0.85em;">
+        <p>Setup and support by <strong>OpenClaw Install</strong></p>
+        <p>Contact: ryan@openclawinstall.net</p>
+    </div>
+</body>
+</html>
