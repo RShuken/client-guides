@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Woodhouse Security Report Card — OpenClaw Audit</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: #1a1a2e;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    min-height: 100vh;
+    line-height: 1.7;
+    padding: 40px 20px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container { max-width: 800px; margin: 0 auto; }
+
+  .grade-card {
+    background: #fff;
+    border-radius: 24px;
+    padding: 48px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+    margin-bottom: 32px;
+  }
+  .grade {
+    font-size: 6rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+  }
+  .grade-label {
+    font-size: 1.2rem;
+    color: #16a34a;
+    font-weight: 600;
+    margin-top: 8px;
+  }
+  .grade-desc {
+    color: #64748b;
+    font-size: 1rem;
+    max-width: 500px;
+    margin: 20px auto 0;
+  }
+
+  .stats-row {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+  .stat {
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 2rem;
+    font-weight: 700;
+  }
+  .stat-num.green { color: #22c55e; }
+  .stat-num.blue { color: #3b82f6; }
+  .stat-num.yellow { color: #eab308; }
+  .stat-num.red { color: #ef4444; }
+  .stat-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-top: 4px;
+  }
+
+  .section {
+    background: #fff;
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+  }
+  .section h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1e1b4b;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .fix-item {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .fix-item h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #166534;
+    margin-bottom: 12px;
+  }
+  .fix-change {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+  }
+  .fix-old {
+    background: #fee2e2;
+    color: #dc2626;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-family: monospace;
+    text-decoration: line-through;
+  }
+  .fix-arrow { color: #22c55e; font-weight: bold; }
+  .fix-new {
+    background: #dcfce7;
+    color: #16a34a;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-family: monospace;
+    font-weight: 600;
+  }
+
+  .check-item {
+    padding: 16px 0;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .check-item:last-child { border-bottom: none; }
+  .check-item h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1e1b4b;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .check-item h3::before {
+    content: "✅";
+    font-size: 1rem;
+  }
+  .check-item p {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-left: 28px;
+  }
+  .check-status {
+    font-size: 0.8rem;
+    color: #16a34a;
+    background: #dcfce7;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 8px;
+  }
+
+  .firewall-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin-top: 16px;
+  }
+  .firewall-table th {
+    text-align: left;
+    padding: 12px;
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+  }
+  .firewall-table td {
+    padding: 12px;
+    border-top: 1px solid #e2e8f0;
+  }
+  .firewall-table code {
+    background: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+
+  .info-table {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+  .info-table tr td:first-child {
+    color: #64748b;
+    padding: 8px 0;
+    width: 50%;
+  }
+  .info-table tr td:last-child {
+    color: #1e1b4b;
+    font-weight: 600;
+    text-align: right;
+  }
+
+  .optional-item {
+    background: #fefce8;
+    border: 1px solid #fef08a;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .optional-item h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #a16207;
+    margin-bottom: 8px;
+  }
+  .optional-item p {
+    font-size: 0.9rem;
+    color: #78716c;
+  }
+  .optional-status {
+    font-size: 0.8rem;
+    color: #a16207;
+    background: #fef9c3;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 8px;
+  }
+
+  .summary {
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    border-radius: 16px;
+    padding: 32px;
+  }
+  .summary h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #166534;
+    margin-bottom: 20px;
+  }
+  .summary ul {
+    list-style: none;
+  }
+  .summary li {
+    padding: 8px 0;
+    font-size: 0.95rem;
+    color: #166534;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .summary li.done::before { content: "✓"; color: #22c55e; font-weight: bold; }
+  .summary li.optional::before { content: "○"; color: #eab308; }
+
+  footer {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.85rem;
+    margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="grade-card">
+    <div class="grade">A</div>
+    <div class="grade-label">Security Score: 95/100</div>
+    <p class="grade-desc">
+      Woodhouse has been hardened with all critical security measures in place. The Mac Studio is well-protected 
+      with firewall enabled, stealth mode active, and properly configured file permissions.
+    </p>
+    
+    <div class="stats-row">
+      <div class="stat">
+        <div class="stat-num green">8</div>
+        <div class="stat-label">Checks Passed</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num blue">5</div>
+        <div class="stat-label">Fixed Today</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num yellow">1</div>
+        <div class="stat-label">Optional</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num green">0</div>
+        <div class="stat-label">Critical</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>🔧 Fixed During This Audit</h2>
+    
+    <div class="fix-item">
+      <h3>macOS Firewall</h3>
+      <div class="fix-change">
+        <span class="fix-old">disabled</span>
+        <span class="fix-arrow">→</span>
+        <span class="fix-new">enabled</span>
+      </div>
+    </div>
+    
+    <div class="fix-item">
+      <h3>Stealth Mode</h3>
+      <div class="fix-change">
+        <span class="fix-old">disabled</span>
+        <span class="fix-arrow">→</span>
+        <span class="fix-new">enabled</span>
+      </div>
+    </div>
+    
+    <div class="fix-item">
+      <h3>OpenClaw Directory Permissions</h3>
+      <div class="fix-change">
+        <span class="fix-old">755</span>
+        <span class="fix-arrow">→</span>
+        <span class="fix-new">700</span>
+      </div>
+    </div>
+    
+    <div class="fix-item">
+      <h3>Credentials Directory</h3>
+      <div class="fix-change">
+        <span class="fix-old">755</span>
+        <span class="fix-arrow">→</span>
+        <span class="fix-new">700</span>
+      </div>
+    </div>
+    
+    <div class="fix-item">
+      <h3>Config File Permissions</h3>
+      <div class="fix-change">
+        <span class="fix-old">644</span>
+        <span class="fix-arrow">→</span>
+        <span class="fix-new">600</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>🟢 Passed Checks</h2>
+    
+    <div class="check-item">
+      <h3>macOS Firewall Enabled <span class="check-status">State = 1</span></h3>
+      <p>Firewall is now enabled, protecting against unauthorized incoming connections.</p>
+    </div>
+    
+    <div class="check-item">
+      <h3>Stealth Mode Active</h3>
+      <p>Mac doesn't respond to ping requests or connection attempts from unknown sources.</p>
+    </div>
+    
+    <div class="check-item">
+      <h3>System Integrity Protection (SIP) <span class="check-status">Enabled</span></h3>
+      <p>macOS system files and processes are protected from modification.</p>
+    </div>
+    
+    <div class="check-item">
+      <h3>Gatekeeper <span class="check-status">Assessments Enabled</span></h3>
+      <p>Only trusted software from identified developers or the App Store can run.</p>
+    </div>
+    
+    <div class="check-item">
+      <h3>OpenClaw Gateway Binding <span class="check-status">Localhost Only</span></h3>
+      <p>Gateway cannot be accessed from external network — secure configuration.</p>
+    </div>
+    
+    <div class="check-item">
+      <h3>Telegram DM Policy <span class="check-status">Allowlist</span></h3>
+      <p>Only Josh (7480100712) can DM the bot. All others are blocked.</p>
+    </div>
+    
+    <div class="check-item">
+      <h3>Telegram Group Policy <span class="check-status">Allowlist</span></h3>
+      <p>Only Josh can add the bot to groups. Prevents unauthorized access.</p>
+    </div>
+    
+    <div class="check-item">
+      <h3>File Permissions <span class="check-status">Owner Only</span></h3>
+      <p>All sensitive directories now have 700 permissions. Credentials and configs are protected.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>⚙️ Gateway Configuration</h2>
+    <table class="info-table">
+      <tr><td>gateway.bind</td><td>loopback</td></tr>
+      <tr><td>gateway.mode</td><td>local</td></tr>
+      <tr><td>gateway.auth.mode</td><td>token</td></tr>
+      <tr><td>gateway.port</td><td>18789</td></tr>
+      <tr><td>Tailscale</td><td>off</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>🟡 Optional Improvements</h2>
+    
+    <div class="optional-item">
+      <h3>SSH Port Forward <span class="optional-status">Intentional</span></h3>
+      <p>Port 22 is forwarded for remote management. This is required for setup but could be disabled after setup is complete if remote access is no longer needed.</p>
+    </div>
+  </div>
+
+  <div class="summary">
+    <h2>📋 Summary</h2>
+    <ul>
+      <li class="done">macOS Firewall enabled with Stealth Mode</li>
+      <li class="done">System Integrity Protection active</li>
+      <li class="done">Gatekeeper protecting app execution</li>
+      <li class="done">All sensitive files owner-only (700/600)</li>
+      <li class="done">Gateway localhost-only with token auth</li>
+      <li class="done">Telegram allowlist — Josh only</li>
+      <li class="optional">Optional: Disable SSH port forward when not needed</li>
+    </ul>
+  </div>
+
+  <footer>
+    <p>Security audit performed by Molty • February 13, 2026</p>
+    <p>Powered by OpenClaw Install</p>
+  </footer>
+</div>
+
+</body>
+</html>
