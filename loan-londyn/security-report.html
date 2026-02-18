@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Londyn - Security Report</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        header {
+            text-align: center;
+            padding: 3rem 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+        .score-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--success), #16a34a);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        .subtitle { color: var(--text-muted); }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .card h2 {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .check-item:last-child { border-bottom: none; }
+        .check-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+        .check-icon.success { background: var(--success); }
+        .check-icon.fixed { background: var(--primary); }
+        .check-icon.info { background: var(--info); }
+        .check-icon.warning { background: var(--warning); }
+        .check-content { flex: 1; }
+        .check-title { font-weight: 600; }
+        .check-desc { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        .stat-value { font-size: 1.5rem; font-weight: 700; }
+        .stat-label { color: var(--text-muted); font-size: 0.8rem; }
+        .stat-value.success { color: var(--success); }
+        .stat-value.fixed { color: var(--primary); }
+        .stat-value.info { color: var(--info); }
+        .stat-value.warning { color: var(--warning); }
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        a { color: var(--primary); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="score-badge">A</div>
+            <h1>Security Report</h1>
+            <p class="subtitle">Londyn • Audited February 18, 2026</p>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-value success">5</div>
+                <div class="stat-label">Passed</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value fixed">2</div>
+                <div class="stat-label">Fixed</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value info">2</div>
+                <div class="stat-label">Info</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value warning">2</div>
+                <div class="stat-label">Warnings</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🔧 Issues Fixed</h2>
+            <div class="check-item">
+                <div class="check-icon fixed">✓</div>
+                <div class="check-content">
+                    <div class="check-title">Config File Permissions</div>
+                    <div class="check-desc">Config was world-readable (644), now restricted to owner only (600)</div>
+                </div>
+            </div>
+            <div class="check-item">
+                <div class="check-icon fixed">✓</div>
+                <div class="check-content">
+                    <div class="check-title">Model Fallback Chain</div>
+                    <div class="check-desc">Added GPT-4o and Claude Sonnet 4 fallbacks to prevent service interruption</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>✅ Passed Checks</h2>
+            <div class="check-item">
+                <div class="check-icon success">✓</div>
+                <div class="check-content">
+                    <div class="check-title">SSH Root Login Disabled</div>
+                    <div class="check-desc">PermitRootLogin set to "no" — prevents direct root access</div>
+                </div>
+            </div>
+            <div class="check-item">
+                <div class="check-icon success">✓</div>
+                <div class="check-content">
+                    <div class="check-title">SSH Password Auth Disabled</div>
+                    <div class="check-desc">Key-only authentication enforced — no password brute-force possible</div>
+                </div>
+            </div>
+            <div class="check-item">
+                <div class="check-icon success">✓</div>
+                <div class="check-content">
+                    <div class="check-title">OpenClaw Localhost Binding</div>
+                    <div class="check-desc">Gateway only listens on 127.0.0.1 — not exposed to internet</div>
+                </div>
+            </div>
+            <div class="check-item">
+                <div class="check-icon success">✓</div>
+                <div class="check-content">
+                    <div class="check-title">Automatic Security Updates</div>
+                    <div class="check-desc">unattended-upgrades installed — system patches automatically</div>
+                </div>
+            </div>
+            <div class="check-item">
+                <div class="check-icon success">✓</div>
+                <div class="check-content">
+                    <div class="check-title">Telegram DM Allowlist</div>
+                    <div class="check-desc">Only your Telegram ID (8599809264) can DM the bot</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>⚠️ Accepted Risks</h2>
+            <div class="check-item">
+                <div class="check-icon warning">!</div>
+                <div class="check-content">
+                    <div class="check-title">Open Group Policy (Telegram + Slack)</div>
+                    <div class="check-desc">Groups are set to "open" with elevated tools — acceptable because Slack is a trusted private workspace and Telegram groups are controlled</div>
+                </div>
+            </div>
+            <div class="check-item">
+                <div class="check-icon warning">!</div>
+                <div class="check-content">
+                    <div class="check-title">Fallback Models Below Top Tier</div>
+                    <div class="check-desc">GPT-4o and Sonnet 4 are fallbacks — lower tier models are more susceptible to prompt injection but only used when primary fails</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>💡 Optional Improvements</h2>
+            <div class="check-item">
+                <div class="check-icon info">i</div>
+                <div class="check-content">
+                    <div class="check-title">Host Firewall (ufw)</div>
+                    <div class="check-desc">No iptables rules configured — relying on GCP's network firewall which is fine, but ufw would add defense-in-depth</div>
+                </div>
+            </div>
+            <div class="check-item">
+                <div class="check-icon info">i</div>
+                <div class="check-content">
+                    <div class="check-title">SSH IP Restriction</div>
+                    <div class="check-desc">Could limit SSH access to specific IPs if you have a static IP or VPN</div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Security audit by <a href="https://openclawinstall.net">OpenClaw Install</a></p>
+            <p style="margin-top: 0.5rem;">Score: A (5 passed, 2 fixed, 2 accepted risks)</p>
+        </footer>
+    </div>
+</body>
+</html>

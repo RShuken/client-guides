@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Londyn - Getting Started Guide</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --success: #22c55e;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        header {
+            text-align: center;
+            padding: 3rem 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+        .emoji { font-size: 4rem; margin-bottom: 1rem; }
+        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .subtitle { color: var(--text-muted); font-size: 1.1rem; }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .card ul { padding-left: 1.5rem; }
+        .card li { margin-bottom: 0.5rem; }
+        code {
+            background: var(--bg);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.9rem;
+        }
+        .specs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .spec-item {
+            background: var(--bg);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .spec-label { color: var(--text-muted); font-size: 0.85rem; }
+        .spec-value { font-weight: 600; margin-top: 0.25rem; }
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        a { color: var(--primary); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="emoji">🦞</div>
+            <h1>Meet Londyn</h1>
+            <p class="subtitle">Your personal AI assistant, set up by OpenClaw Install</p>
+        </header>
+
+        <div class="card">
+            <h2>👋 Who is Londyn?</h2>
+            <p>Londyn is your always-on AI assistant running on your GCP VM. It's powered by Claude Opus 4 (with GPT-4o and Claude Sonnet 4 as fallbacks) and connected to both Telegram and Slack so you can chat with it anywhere.</p>
+            <p style="margin-top: 1rem;">Think of it as a capable employee that never sleeps — it can help with research, writing, coding, answering questions, and automating tasks.</p>
+        </div>
+
+        <div class="card">
+            <h2>💬 How to Use Londyn</h2>
+            <p><strong>Telegram:</strong> Message <code>@londyn_1914_bot</code></p>
+            <p style="margin-top: 0.5rem;"><strong>Slack:</strong> Mention Londyn in your workspace</p>
+            <ul style="margin-top: 1rem;">
+                <li>Just type naturally — no special commands needed</li>
+                <li>Ask questions, request help, or give tasks</li>
+                <li>It remembers context within a conversation</li>
+                <li>Create groups for different projects (isolated memory)</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>⚡ What Londyn Can Do</h2>
+            <ul>
+                <li><strong>Answer questions</strong> — research, explanations, advice</li>
+                <li><strong>Write content</strong> — emails, docs, code, messages</li>
+                <li><strong>Run commands</strong> — execute shell commands on your VM</li>
+                <li><strong>Read/write files</strong> — access your filesystem</li>
+                <li><strong>Browse the web</strong> — search and fetch web pages</li>
+                <li><strong>Remember things</strong> — maintains memory across sessions</li>
+                <li><strong>Set reminders</strong> — cron jobs and scheduled tasks</li>
+                <li><strong>Transcribe meetings</strong> — via Fireflies integration</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>🔧 Useful Commands</h2>
+            <ul>
+                <li><code>/status</code> — Check bot status and session info</li>
+                <li><code>/reasoning</code> — Toggle extended thinking mode</li>
+                <li><code>/model</code> — Switch AI models</li>
+                <li><code>/reset</code> — Clear conversation context</li>
+                <li><code>/compact</code> — Compress long conversations</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>📊 Technical Specs</h2>
+            <div class="specs-grid">
+                <div class="spec-item">
+                    <div class="spec-label">Primary Model</div>
+                    <div class="spec-value">Claude Opus 4</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Fallbacks</div>
+                    <div class="spec-value">GPT-4o, Sonnet 4</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Hardware</div>
+                    <div class="spec-value">GCP VM (Ubuntu)</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-label">Channels</div>
+                    <div class="spec-value">Telegram + Slack</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🔗 Related Documents</h2>
+            <ul>
+                <li><a href="security-report.html">Security Report</a> — Audit results and fixes</li>
+                <li><a href="work-done.html">Work Completed</a> — Installation timeline</li>
+            </ul>
+        </div>
+
+        <footer>
+            <p>Set up February 16-18, 2026 by <a href="https://openclawinstall.net">OpenClaw Install</a></p>
+        </footer>
+    </div>
+</body>
+</html>
