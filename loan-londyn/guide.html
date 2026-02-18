@@ -11,7 +11,7 @@
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     color: #2d2a26;
-    background: #faf9f7;
+    background: #f9f7f5;
     line-height: 1.7;
     -webkit-font-smoothing: antialiased;
   }
@@ -19,7 +19,7 @@
   /* ─── Nav ─── */
   nav {
     position: sticky; top: 0; z-index: 100;
-    background: rgba(255,255,255,0.92);
+    background: rgba(252,250,248,0.95);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(0,0,0,0.06);
@@ -45,7 +45,7 @@
 
   /* ─── Hero ─── */
   .hero {
-    background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 40%, #e9d5ff 100%);
+    background: linear-gradient(135deg, #fdf8f3 0%, #f5eff8 30%, #ede4f5 60%, #e4d8f0 100%);
     padding: 100px 24px 80px;
     text-align: center;
     position: relative;
@@ -54,7 +54,7 @@
   .hero::before {
     content: '';
     position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 30% 20%, rgba(168,85,247,0.15) 0%, transparent 60%),
+    background: radial-gradient(ellipse at 30% 20%, rgba(147,51,234,0.12) 0%, transparent 60%),
                 radial-gradient(ellipse at 70% 80%, rgba(124,58,237,0.08) 0%, transparent 50%);
   }
   .hero-content { position: relative; max-width: 720px; margin: 0 auto; }
@@ -99,7 +99,7 @@
   .section-subtitle {
     font-size: 1.05rem; color: #78716c; margin-bottom: 40px; max-width: 600px;
   }
-  .alt-bg { background: #fff; }
+  .alt-bg { background: #fcfaf8; }
 
   /* ─── Feature Cards ─── */
   .features-grid {
@@ -107,14 +107,14 @@
     gap: 20px; margin-top: 32px;
   }
   .feature-card {
-    background: #fff; border: 1px solid #f5f0eb;
+    background: #fffdfb; border: 1px solid #ebe5df;
     border-radius: 16px; padding: 28px 24px;
     transition: all 0.25s;
   }
-  .feature-card:hover { border-color: #e9d5ff; box-shadow: 0 8px 30px rgba(124,58,237,0.06); transform: translateY(-2px); }
+  .feature-card:hover { border-color: #d8c9e8; box-shadow: 0 8px 30px rgba(124,58,237,0.08); transform: translateY(-2px); }
   .feature-icon {
     width: 48px; height: 48px;
-    background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+    background: linear-gradient(135deg, #f8f2fc, #efe6f7);
     border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
     font-size: 1.4rem; margin-bottom: 16px;
@@ -128,14 +128,14 @@
     counter-increment: steps;
     display: flex; gap: 20px; align-items: flex-start;
     padding: 20px 0;
-    border-bottom: 1px solid #f5f0eb;
+    border-bottom: 1px solid #ebe5df;
   }
   .steps-list li:last-child { border-bottom: none; }
   .steps-list li::before {
     content: counter(steps);
     flex-shrink: 0;
     width: 40px; height: 40px;
-    background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+    background: linear-gradient(135deg, #9333ea, #7c3aed);
     color: #fff; font-weight: 800; font-size: 1rem;
     border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
@@ -149,12 +149,12 @@
     gap: 16px; margin-top: 32px;
   }
   .integration-card {
-    background: #fff; border: 1px solid #f5f0eb;
+    background: #fffdfb; border: 1px solid #ebe5df;
     border-radius: 14px; padding: 24px;
     text-align: center;
     transition: all 0.25s;
   }
-  .integration-card:hover { border-color: #e9d5ff; box-shadow: 0 4px 20px rgba(124,58,237,0.08); }
+  .integration-card:hover { border-color: #d8c9e8; box-shadow: 0 4px 20px rgba(124,58,237,0.10); }
   .integration-card .int-icon { font-size: 2.2rem; margin-bottom: 12px; }
   .integration-card h4 { font-weight: 700; color: #1c1917; margin-bottom: 6px; }
   .integration-card p { font-size: 0.85rem; color: #78716c; }
@@ -171,8 +171,8 @@
     gap: 16px; margin-top: 32px;
   }
   .tip {
-    background: #faf5ff;
-    border: 1px solid #f3e8ff;
+    background: #faf6f2;
+    border: 1px solid #ebe0d5;
     border-radius: 14px; padding: 22px 24px;
     display: flex; gap: 14px; align-items: flex-start;
   }
@@ -203,18 +203,18 @@
   .cmd-table th, .cmd-table td { text-align: left; padding: 14px 16px; }
   .cmd-table th {
     font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;
-    color: #a8a29e; font-weight: 600; border-bottom: 2px solid #f5f0eb;
+    color: #a8a29e; font-weight: 600; border-bottom: 2px solid #ebe5df;
   }
-  .cmd-table td { border-bottom: 1px solid #f5f0eb; font-size: 0.92rem; color: #57534e; }
+  .cmd-table td { border-bottom: 1px solid #ebe5df; font-size: 0.92rem; color: #57534e; }
   .cmd-table code {
-    background: #f3e8ff; color: #6d28d9;
+    background: #f5eff8; color: #7c3aed;
     padding: 3px 10px; border-radius: 6px;
     font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.88rem; font-weight: 600;
   }
 
   /* ─── Workflow Diagram ─── */
   .workflow-visual {
-    background: #fff; border: 1px solid #f5f0eb;
+    background: #fffdfb; border: 1px solid #ebe5df;
     border-radius: 16px; padding: 32px;
     margin-top: 32px;
   }
@@ -224,13 +224,13 @@
     font-size: 0.95rem;
   }
   .workflow-node {
-    background: linear-gradient(135deg, #faf5ff, #f3e8ff);
-    border: 1px solid #e9d5ff;
+    background: linear-gradient(135deg, #f8f2fc, #efe6f7);
+    border: 1px solid #d8c9e8;
     padding: 12px 20px; border-radius: 10px;
     font-weight: 600; color: #5b21b6;
     text-align: center;
   }
-  .workflow-arrow { color: #a78bfa; font-size: 1.2rem; }
+  .workflow-arrow { color: #9333ea; font-size: 1.2rem; }
 
   /* ─── Quick Start Banner ─── */
   .quick-start {
@@ -242,7 +242,7 @@
   }
   .quick-start .qs-icon { font-size: 3rem; flex-shrink: 0; }
   .quick-start .qs-content { flex: 1; min-width: 200px; }
-  .quick-start h3 { font-size: 1.3rem; font-weight: 800; margin-bottom: 8px; color: #a78bfa; }
+  .quick-start h3 { font-size: 1.3rem; font-weight: 800; margin-bottom: 8px; color: #c4b5fd; }
   .quick-start p { color: #d6d3d1; font-size: 0.95rem; }
   .quick-start a {
     display: inline-block; margin-top: 16px;
@@ -251,16 +251,16 @@
     text-decoration: none; font-weight: 700; font-size: 0.95rem;
     transition: all 0.2s;
   }
-  .quick-start a:hover { background: #8b5cf6; transform: translateY(-1px); }
+  .quick-start a:hover { background: #9333ea; color: #fff; transform: translateY(-1px); }
 
   /* ─── Footer ─── */
   footer {
     background: #1c1917; color: #a8a29e;
     padding: 48px 24px; text-align: center;
   }
-  footer .footer-brand { font-size: 1.1rem; font-weight: 700; color: #a78bfa; margin-bottom: 8px; }
+  footer .footer-brand { font-size: 1.1rem; font-weight: 700; color: #c4b5fd; margin-bottom: 8px; }
   footer p { font-size: 0.88rem; margin-bottom: 6px; }
-  footer a { color: #a78bfa; text-decoration: none; }
+  footer a { color: #c4b5fd; text-decoration: none; }
   footer a:hover { text-decoration: underline; }
 
   /* ─── Responsive ─── */
@@ -581,14 +581,14 @@
     <p class="section-subtitle">Londyn is configured with a multi-provider fallback chain. Even if a provider has issues, Londyn keeps working.</p>
 
     <div style="display:flex;flex-direction:column;gap:12px;margin-top:32px;">
-      <div style="background:#f5f3ff;border:1px solid #ddd6fe;border-radius:10px;padding:1.25rem;display:flex;align-items:center;gap:14px;">
+      <div style="background:#f8f2fc;border:1px solid #d8c9e8;border-radius:10px;padding:1.25rem;display:flex;align-items:center;gap:14px;">
         <span style="font-size:1.5rem;">🧠</span>
         <div>
           <strong style="color:#5b21b6;">Primary: Claude Opus 4</strong> <span style="background:#ede9fe;color:#7c3aed;font-size:0.75rem;font-weight:600;padding:2px 8px;border-radius:4px;margin-left:6px;">ANTHROPIC</span>
           <p style="color:#78716c;font-size:0.9rem;margin-top:4px;">The most powerful Claude model — exceptional reasoning, coding, and conversation. Handles all your messages by default.</p>
         </div>
       </div>
-      <div style="text-align:center;color:#a78bfa;font-size:1.2rem;">↓ <span style="font-size:0.8rem;color:#78716c;">if Opus hits a rate limit or error</span> ↓</div>
+      <div style="text-align:center;color:#9333ea;font-size:1.2rem;">↓ <span style="font-size:0.8rem;color:#78716c;">if Opus hits a rate limit or error</span> ↓</div>
       <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:1.25rem;display:flex;align-items:center;gap:14px;">
         <span style="font-size:1.5rem;">🤖</span>
         <div>
@@ -596,8 +596,8 @@
           <p style="color:#78716c;font-size:0.9rem;margin-top:4px;">OpenAI's flagship model. Different provider — independent infrastructure, unaffected by Anthropic outages.</p>
         </div>
       </div>
-      <div style="text-align:center;color:#a78bfa;font-size:1.2rem;">↓ <span style="font-size:0.8rem;color:#78716c;">if OpenAI also limited</span> ↓</div>
-      <div style="background:#fefce8;border:1px solid #fef08a;border-radius:10px;padding:1.25rem;display:flex;align-items:center;gap:14px;">
+      <div style="text-align:center;color:#9333ea;font-size:1.2rem;">↓ <span style="font-size:0.8rem;color:#78716c;">if OpenAI also limited</span> ↓</div>
+      <div style="background:#faf6f2;border:1px solid #ebe0d5;border-radius:10px;padding:1.25rem;display:flex;align-items:center;gap:14px;">
         <span style="font-size:1.5rem;">⚡</span>
         <div>
           <strong style="color:#a16207;">Fallback 2: Claude Sonnet 4</strong> <span style="background:#fef9c3;color:#a16207;font-size:0.75rem;font-weight:600;padding:2px 8px;border-radius:4px;margin-left:6px;">ANTHROPIC</span>
@@ -605,7 +605,7 @@
         </div>
       </div>
       <div style="text-align:center;color:#16a34a;font-size:1.2rem;">↓ <span style="font-size:0.8rem;color:#78716c;">cooldown clears (~3 min)</span> ↓</div>
-      <div style="background:#faf9f7;border:1px solid #e7e0d5;border-radius:10px;padding:1.25rem;display:flex;align-items:center;gap:14px;">
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:1.25rem;display:flex;align-items:center;gap:14px;">
         <span style="font-size:1.5rem;">✅</span>
         <div>
           <strong style="color:#166534;">Back to Opus automatically</strong>
