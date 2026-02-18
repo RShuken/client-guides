@@ -74,8 +74,63 @@
     <h1>🦞 Londyn Work Done Log</h1>
     <div class="date">Tracking all work performed on Loan Phan-Franco's Londyn AI Assistant</div>
 
-    <!-- ─── Feb 18: Security Audit & Fallback ─── -->
+    <!-- ─── Feb 18: Compaction Fix ─── -->
     <details class="work-item" open>
+        <summary>
+            <span class="work-date">Feb 18, 2026 — 12:45 PM MST</span>
+            <span class="work-title">🔧 Compaction Mode Fix</span>
+            <span class="badge badge-fix">FIX</span>
+        </summary>
+        <div class="details-body">
+            <h4>Problem</h4>
+            <p>Investigation into the context overflow issue revealed that <strong>"safeguard" compaction mode</strong> (the default) silently fails when sessions approach the context limit. Instead of compacting the conversation history, it produces useless summaries like "Summary unavailable due to context limits" and lets the session crash.</p>
+
+            <h4>Root Cause</h4>
+            <div class="code-block">
+                <strong>Previous config:</strong><br>
+                <code>"compaction": { "mode": "safeguard" }</code><br><br>
+                <strong>Behavior:</strong> Safeguard mode is too conservative — at ~180K tokens, it refuses to compact because it considers it "risky", letting the session overflow instead.
+            </div>
+
+            <h4>Fix Applied</h4>
+            <table style="width:100%; border-collapse: collapse; margin: 10px 0;">
+                <tr style="background: #f8f9fa;">
+                    <th style="text-align:left; padding: 8px; border: 1px solid #ddd;">Setting</th>
+                    <th style="text-align:left; padding: 8px; border: 1px solid #ddd;">Before</th>
+                    <th style="text-align:left; padding: 8px; border: 1px solid #ddd;">After</th>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><code>compaction.mode</code></td>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><code>"safeguard"</code></td>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><code>"default"</code></td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><code>reserveTokensFloor</code></td>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><code>20000</code> (implicit default)</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><code>40000</code></td>
+                </tr>
+            </table>
+
+            <h4>What This Changes</h4>
+            <ul>
+                <li><strong>Default mode</strong> — Actually runs compaction when needed instead of giving up</li>
+                <li><strong>Higher reserve floor</strong> — Triggers compaction earlier (~160K tokens instead of ~180K), giving more breathing room</li>
+            </ul>
+
+            <h4>Commands Run</h4>
+            <div class="code-block">
+                <span class="command">jq '.agents.defaults.compaction = {"mode": "default", "reserveTokensFloor": 40000}' openclaw.json</span><br>
+                <span class="command">chmod 600 ~/.openclaw/openclaw.json</span><br>
+                <span class="command">kill -USR1 $(pgrep openclaw-gatewa)</span>
+            </div>
+
+            <h4>Result</h4>
+            <p>Londyn will now properly compact long conversations instead of crashing. Combined with the fallback chain added earlier, this provides <strong>double protection</strong> against context overflow issues.</p>
+        </div>
+    </details>
+
+    <!-- ─── Feb 18: Security Audit & Fallback ─── -->
+    <details class="work-item">
         <summary>
             <span class="work-date">Feb 18, 2026 — 9:37 AM MST</span>
             <span class="work-title">🛡️ Security Audit + Model Fallback Chain</span>
