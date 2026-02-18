@@ -129,6 +129,43 @@
         </div>
     </details>
 
+    <!-- ─── Feb 18: GPT-4o Fallback Fix ─── -->
+    <details class="work-item">
+        <summary>
+            <span class="work-date">Feb 18, 2026 — 3:58 PM MST</span>
+            <span class="work-title">🔧 GPT-4o Fallback Not Working</span>
+            <span class="badge badge-fix">FIX</span>
+        </summary>
+        <div class="details-body">
+            <h4>Problem</h4>
+            <p>When Claude hit rate limits, the system wasn't falling back to GPT-4o as configured. Instead, it was skipping GPT-4o entirely and failing on Sonnet (which was also rate-limited).</p>
+
+            <h4>Log Evidence</h4>
+            <div class="code-block">
+                <code>All models failed (2): anthropic/claude-opus-4-6: ⚠️ API rate limit reached | anthropic/claude-sonnet-4-20250514: No available auth profile</code><br><br>
+                <strong>Note:</strong> Says "2 models failed" but there are 3 in the chain — GPT-4o was being skipped!
+            </div>
+
+            <h4>Root Cause</h4>
+            <p>The <code>models</code> config section only listed Anthropic models. OpenClaw requires models to be registered in this section to be used, even if they're in the fallback chain:</p>
+            <div class="code-block">
+                <strong>Before:</strong><br>
+                <code>"models": { "anthropic/claude-opus-4-6": {}, "anthropic/claude-sonnet-4-20250514": {} }</code><br><br>
+                <strong>After:</strong><br>
+                <code>"models": { "anthropic/claude-opus-4-6": {}, "anthropic/claude-sonnet-4-20250514": {}, <strong>"openai/gpt-4o": {}</strong> }</code>
+            </div>
+
+            <h4>Fix Applied</h4>
+            <ul>
+                <li>Added <code>"openai/gpt-4o": {}</code> to the models config</li>
+                <li>Reloaded gateway via SIGUSR1</li>
+            </ul>
+
+            <h4>Result</h4>
+            <p>Fallback chain now works correctly: <strong>Claude Opus → GPT-4o → Claude Sonnet</strong>. When Anthropic rate limits hit, GPT-4o will properly take over.</p>
+        </div>
+    </details>
+
     <!-- ─── Feb 18: Security Audit & Fallback ─── -->
     <details class="work-item">
         <summary>
