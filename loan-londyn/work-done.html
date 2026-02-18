@@ -3,296 +3,319 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Londyn - Work Completed</title>
+    <title>Londyn Work Done - Loan Phan-Franco Project</title>
     <style>
-        :root {
-            --primary: #6366f1;
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --text: #e2e8f0;
-            --text-muted: #94a3b8;
-            --border: #334155;
-            --success: #22c55e;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            padding: 2rem;
-        }
-        .container { max-width: 800px; margin: 0 auto; }
-        header {
-            text-align: center;
-            padding: 3rem 0;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 2rem;
-        }
-        .emoji { font-size: 4rem; margin-bottom: 1rem; }
-        h1 { font-size: 2rem; margin-bottom: 0.5rem; }
-        .subtitle { color: var(--text-muted); }
-        .timeline {
-            position: relative;
-            padding-left: 2rem;
-        }
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 7px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: var(--border);
-        }
-        .task {
-            position: relative;
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        .task::before {
-            content: '';
-            position: absolute;
-            left: -27px;
-            top: 1.75rem;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: var(--success);
-            border: 3px solid var(--bg);
-        }
-        .task-header {
+        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; max-width: 900px; margin: 40px auto; }
+        h1 { color: #2c3e50; }
+        h2 { color: #34495e; border-bottom: 2px solid #8b5cf6; padding-bottom: 5px; }
+        .date { color: #7f8c8d; font-style: italic; margin-bottom: 24px; }
+        .section { margin: 20px 0; }
+        .code-block { background-color: #f8f9fa; border-left: 4px solid #8b5cf6; padding: 10px; margin: 10px 0; font-size: 0.9em; overflow-x: auto; }
+        .command { font-family: monospace; background-color: #333; color: #fff; padding: 2px 4px; }
+        code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+
+        .work-item { border: 1px solid #e0e0e0; margin: 15px 0; border-radius: 8px; overflow: hidden; }
+        .work-item summary {
+            padding: 15px;
+            cursor: pointer;
+            background: #fafafa;
+            border-bottom: 1px solid #e0e0e0;
+            list-style: none;
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.75rem;
+            align-items: center;
+            gap: 12px;
         }
-        .task-title { font-weight: 600; font-size: 1.1rem; }
-        .task-time { color: var(--text-muted); font-size: 0.85rem; }
-        .task-desc { color: var(--text-muted); }
-        .task-details {
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border);
+        .work-item summary::-webkit-details-marker { display: none; }
+        .work-item summary::before {
+            content: '▶';
+            font-size: 0.7em;
+            transition: transform 0.2s;
+            flex-shrink: 0;
         }
-        .detail-item {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-        .detail-label { color: var(--text-muted); min-width: 100px; }
-        code {
-            background: var(--bg);
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-family: 'SF Mono', Monaco, monospace;
-            font-size: 0.85rem;
-        }
-        .summary-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .summary-grid {
+        .work-item[open] summary::before { transform: rotate(90deg); }
+        .work-item[open] summary { border-bottom: 1px solid #e0e0e0; }
+        .work-item .details-body { padding: 15px; }
+        .work-date { font-weight: bold; color: #8b5cf6; font-size: 0.85em; white-space: nowrap; }
+        .work-title { font-weight: 600; color: #2c3e50; font-size: 1.05em; }
+        .work-summary { color: #666; font-size: 0.9em; margin-left: auto; }
+
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; font-weight: 600; }
+        .badge-fix { background: #fee2e2; color: #991b1b; }
+        .badge-config { background: #dbeafe; color: #1e40af; }
+        .badge-setup { background: #d1fae5; color: #065f46; }
+        .badge-security { background: #fef3c7; color: #92400e; }
+        .badge-integration { background: #e9d5ff; color: #6b21a8; }
+
+        .integration-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            margin: 15px 0;
+        }
+        .integration-card {
+            background: #faf5ff;
+            border: 1px solid #e9d5ff;
+            border-radius: 8px;
+            padding: 12px;
             text-align: center;
         }
-        .summary-value { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
-        .summary-label { color: var(--text-muted); font-size: 0.85rem; }
-        footer {
-            text-align: center;
-            padding: 2rem 0;
-            color: var(--text-muted);
-            font-size: 0.9rem;
+        .integration-card .icon { font-size: 1.5rem; margin-bottom: 6px; }
+        .integration-card .name { font-weight: 600; color: #5b21b6; }
+        .integration-card .status { font-size: 0.8em; color: #16a34a; }
+
+        @media (max-width: 640px) {
+            body { margin: 16px; }
+            .work-item summary { flex-wrap: wrap; }
+            .work-summary { display: none; }
         }
-        a { color: var(--primary); }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="emoji">📋</div>
-            <h1>Work Completed</h1>
-            <p class="subtitle">Londyn Installation • February 16-18, 2026</p>
-        </header>
+    <h1>🦞 Londyn Work Done Log</h1>
+    <div class="date">Tracking all work performed on Loan Phan-Franco's Londyn AI Assistant</div>
 
-        <div class="summary-card">
-            <div class="summary-grid">
-                <div>
-                    <div class="summary-value">7</div>
-                    <div class="summary-label">Tasks Completed</div>
+    <!-- ─── Feb 18: Security Audit & Fallback ─── -->
+    <details class="work-item" open>
+        <summary>
+            <span class="work-date">Feb 18, 2026 — 9:37 AM MST</span>
+            <span class="work-title">🛡️ Security Audit + Model Fallback Chain</span>
+            <span class="badge badge-security">SECURITY</span>
+        </summary>
+        <div class="details-body">
+            <h4>Problem</h4>
+            <p>Londyn hit a <strong>context overflow</strong> (607 messages, 170K tokens exceeded 200K limit) and stopped responding. Investigation revealed no fallback chain was configured, and the config file had insecure permissions.</p>
+
+            <h4>Root Cause Analysis</h4>
+            <div class="code-block">
+                <strong>Context overflow error:</strong><br>
+                <code>error=400 "input length and `max_tokens` exceed context limit: 170649 + 34048 > 200000"</code><br><br>
+                <strong>Config issues found:</strong><br>
+                • <code>fallbacks: []</code> — No fallback models configured<br>
+                • <code>openclaw.json</code> was mode 644 (world-readable)
+            </div>
+
+            <h4>Fixes Applied</h4>
+            <table style="width:100%; border-collapse: collapse; margin: 10px 0;">
+                <tr style="background: #f8f9fa;">
+                    <th style="text-align:left; padding: 8px; border: 1px solid #ddd;">Item</th>
+                    <th style="text-align:left; padding: 8px; border: 1px solid #ddd;">Before</th>
+                    <th style="text-align:left; padding: 8px; border: 1px solid #ddd;">After</th>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">Model fallbacks</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><code>[]</code> (none)</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><code>["openai/gpt-4o", "anthropic/claude-sonnet-4"]</code></td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">Config permissions</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><code>644</code> (world-readable)</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><code>600</code> (owner only)</td>
+                </tr>
+            </table>
+
+            <h4>Security Audit Results</h4>
+            <ul>
+                <li>✅ SSH root login disabled</li>
+                <li>✅ SSH password auth disabled (key-only)</li>
+                <li>✅ OpenClaw bound to localhost only</li>
+                <li>✅ Unattended upgrades enabled</li>
+                <li>✅ Telegram DM allowlist active</li>
+                <li>⚠️ Open group policy — accepted (trusted groups only)</li>
+            </ul>
+
+            <h4>Commands Run</h4>
+            <div class="code-block">
+                <span class="command">chmod 600 ~/.openclaw/openclaw.json</span><br>
+                <span class="command">jq '.agents.defaults.model.fallbacks = ["openai/gpt-4o", "anthropic/claude-sonnet-4-20250514"]' openclaw.json</span><br>
+                <span class="command">sudo systemctl restart openclaw</span>
+            </div>
+
+            <h4>Result</h4>
+            <p>Londyn now has a <strong>3-model fallback chain</strong> (Opus → GPT-4o → Sonnet) and secure file permissions. Security grade: <strong>A</strong></p>
+        </div>
+    </details>
+
+    <!-- ─── Feb 17: Full Integration Stack ─── -->
+    <details class="work-item" open>
+        <summary>
+            <span class="work-date">Feb 17, 2026</span>
+            <span class="work-title">🔗 Complete Integration Stack Achieved</span>
+            <span class="badge badge-integration">INTEGRATION</span>
+        </summary>
+        <div class="details-body">
+            <h4>Milestone</h4>
+            <p>All major productivity integrations now working — Londyn can monitor email, process meetings, manage tasks, and communicate across platforms.</p>
+
+            <div class="integration-grid">
+                <div class="integration-card">
+                    <div class="icon">📧</div>
+                    <div class="name">Gmail</div>
+                    <div class="status">✓ Connected via gog OAuth</div>
                 </div>
-                <div>
-                    <div class="summary-value">3 days</div>
-                    <div class="summary-label">Total Time</div>
+                <div class="integration-card">
+                    <div class="icon">✅</div>
+                    <div class="name">ClickUp</div>
+                    <div class="status">✓ API key configured</div>
                 </div>
-                <div>
-                    <div class="summary-value">Pro</div>
-                    <div class="summary-label">Package</div>
+                <div class="integration-card">
+                    <div class="icon">🎥</div>
+                    <div class="name">Fireflies.ai</div>
+                    <div class="status">✓ API key configured</div>
                 </div>
+                <div class="integration-card">
+                    <div class="icon">💬</div>
+                    <div class="name">Slack</div>
+                    <div class="status">✓ Socket Mode active</div>
+                </div>
+                <div class="integration-card">
+                    <div class="icon">📱</div>
+                    <div class="name">Telegram</div>
+                    <div class="status">✓ @londyn_1914_bot</div>
+                </div>
+            </div>
+
+            <h4>Gmail OAuth Challenge (Solved)</h4>
+            <p>OAuth browser flow kept failing with "state mismatch" in VM environment. Solution: <strong>manual token exchange</strong> via curl when browser flow fails.</p>
+
+            <div class="code-block">
+                <strong>Working commands:</strong><br>
+                <span class="command">export GOG_KEYRING_PASSWORD="[password]"</span><br>
+                <span class="command">gog gmail search 'newer_than:1d' --max 5 --account loan@deepgeminteractive.com</span>
+            </div>
+
+            <h4>Productivity Pipeline</h4>
+            <p><strong>Complete flow:</strong> Gmail ↔️ Fireflies ↔️ Londyn (AI) ↔️ ClickUp ↔️ Slack</p>
+        </div>
+    </details>
+
+    <!-- ─── Feb 16-17: Telegram Groups ─── -->
+    <details class="work-item">
+        <summary>
+            <span class="work-date">Feb 16-17, 2026</span>
+            <span class="work-title">📱 Telegram Groups & Workflows Setup</span>
+            <span class="badge badge-config">CONFIG</span>
+        </summary>
+        <div class="details-body">
+            <h4>Dedicated Workflow Groups Created</h4>
+            <table style="width:100%; border-collapse: collapse; margin: 10px 0;">
+                <tr style="background: #f8f9fa;">
+                    <th style="text-align:left; padding: 8px; border: 1px solid #ddd;">Group</th>
+                    <th style="text-align:left; padding: 8px; border: 1px solid #ddd;">Purpose</th>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><strong>Ziah's Daily Brief</strong></td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">CEO daily task briefings with approval flow for Slack delivery</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><strong>Fireflies → ClickUp</strong></td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">Meeting transcript processing, automatic task creation</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><strong>End of Day Reports</strong></td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">Daily summaries and next-day preparation</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><strong>Ryan and Londyn</strong></td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">Helpdesk channel for support</td>
+                </tr>
+            </table>
+
+            <h4>Custom Scripts Created</h4>
+            <ul>
+                <li><code>ziah-briefing.js</code> — Clean CEO briefing format for Slack delivery</li>
+                <li><code>daily-client-tasks.js</code> — Loan's detailed daily task review</li>
+            </ul>
+        </div>
+    </details>
+
+    <!-- ─── Feb 16: Initial Setup ─── -->
+    <details class="work-item">
+        <summary>
+            <span class="work-date">Feb 16, 2026</span>
+            <span class="work-title">🚀 Initial Setup & Configuration</span>
+            <span class="badge badge-setup">SETUP</span>
+        </summary>
+        <div class="details-body">
+            <h4>GCP VM Provisioned</h4>
+            <table style="width:100%; border-collapse: collapse; margin: 10px 0;">
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd; width: 30%;"><strong>Platform</strong></td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">Google Cloud Platform (Ubuntu)</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><strong>IP Address</strong></td>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><code>34.68.68.85</code> (ephemeral)</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><strong>User</strong></td>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><code>loan</code></td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><strong>SSH Key</strong></td>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><code>client-loan_ed25519</code></td>
+                </tr>
+            </table>
+
+            <h4>OpenClaw Installation</h4>
+            <ul>
+                <li>✅ OpenClaw v2026.2.15 installed</li>
+                <li>✅ Systemd service configured (auto-start on boot)</li>
+                <li>✅ Telegram bot created (@londyn_1914_bot)</li>
+                <li>✅ Slack app configured (Socket Mode)</li>
+            </ul>
+
+            <h4>AI Model Configuration</h4>
+            <table style="width:100%; border-collapse: collapse; margin: 10px 0;">
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><strong>Primary</strong></td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">Claude Opus 4</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><strong>Fallback 1</strong></td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">GPT-4o (OpenAI)</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><strong>Fallback 2</strong></td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">Claude Sonnet 4</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><strong>Thinking Mode</strong></td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">High (extended reasoning)</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;"><strong>Heartbeat</strong></td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">Every 30 minutes</td>
+                </tr>
+            </table>
+
+            <h4>Workspace Setup</h4>
+            <div class="code-block">
+                <strong>Location:</strong> <code>/home/loan/openclaw-workspace</code><br><br>
+                <strong>Files created:</strong><br>
+                • SOUL.md — Personality and behavior guidelines<br>
+                • USER.md — Loan's profile and preferences<br>
+                • TOOLS.md — Integration credentials and notes<br>
+                • MEMORY.md — Long-term memory<br>
+                • IDENTITY.md — Bot identity
             </div>
         </div>
+    </details>
 
-        <div class="timeline">
-            <div class="task">
-                <div class="task-header">
-                    <div class="task-title">🖥️ GCP VM Provisioning</div>
-                    <div class="task-time">Feb 16, 2026</div>
-                </div>
-                <div class="task-desc">Set up Google Cloud Platform virtual machine for Londyn</div>
-                <div class="task-details">
-                    <div class="detail-item">
-                        <span class="detail-label">Platform:</span>
-                        <span>GCP Compute Engine (Ubuntu)</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">IP:</span>
-                        <code>34.68.68.85</code>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">User:</span>
-                        <code>loan</code>
-                    </div>
-                </div>
-            </div>
+    <div class="section">
+        <h2>About Londyn</h2>
+        <p>Londyn is Loan Phan-Franco's personal AI project manager running 24/7 on a GCP VM. It operates through Telegram (@londyn_1914_bot) and Slack, with integrations to Gmail, ClickUp, and Fireflies.ai for complete productivity automation.</p>
+        
+        <p><strong>Client:</strong> Loan Phan-Franco, Project Manager at DeepGem Interactive</p>
+        <p><strong>Location:</strong> Keller, Texas (Central Time)</p>
+        <p><strong>Primary Use:</strong> Email monitoring, meeting processing, task management, daily briefings</p>
+    </div>
 
-            <div class="task">
-                <div class="task-header">
-                    <div class="task-title">🔧 OpenClaw Installation</div>
-                    <div class="task-time">Feb 16, 2026</div>
-                </div>
-                <div class="task-desc">Installed OpenClaw gateway and configured as systemd service</div>
-                <div class="task-details">
-                    <div class="detail-item">
-                        <span class="detail-label">Version:</span>
-                        <code>openclaw@2026.2.15</code>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Service:</span>
-                        <span>systemd (auto-start on boot)</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="task">
-                <div class="task-header">
-                    <div class="task-title">🤖 Telegram Bot Setup</div>
-                    <div class="task-time">Feb 16, 2026</div>
-                </div>
-                <div class="task-desc">Created and configured Telegram bot with secure allowlist</div>
-                <div class="task-details">
-                    <div class="detail-item">
-                        <span class="detail-label">Bot:</span>
-                        <code>@londyn_1914_bot</code>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">DM Policy:</span>
-                        <span>Allowlist (Loan only)</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Group Policy:</span>
-                        <span>Open (trusted groups)</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="task">
-                <div class="task-header">
-                    <div class="task-title">💼 Slack Integration</div>
-                    <div class="task-time">Feb 16, 2026</div>
-                </div>
-                <div class="task-desc">Connected Londyn to Slack workspace via Socket Mode</div>
-                <div class="task-details">
-                    <div class="detail-item">
-                        <span class="detail-label">Mode:</span>
-                        <span>Socket Mode (real-time)</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Status:</span>
-                        <span style="color: var(--success);">✓ Connected</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="task">
-                <div class="task-header">
-                    <div class="task-title">🧠 AI Model Configuration</div>
-                    <div class="task-time">Feb 17, 2026</div>
-                </div>
-                <div class="task-desc">Configured Claude Opus 4 as primary with extended thinking enabled</div>
-                <div class="task-details">
-                    <div class="detail-item">
-                        <span class="detail-label">Primary:</span>
-                        <span>Claude Opus 4</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Thinking:</span>
-                        <span>High (extended reasoning)</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Heartbeat:</span>
-                        <span>Every 30 minutes</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="task">
-                <div class="task-header">
-                    <div class="task-title">🔄 Fallback Chain Setup</div>
-                    <div class="task-time">Feb 18, 2026</div>
-                </div>
-                <div class="task-desc">Diagnosed context overflow issue and added model fallbacks for resilience</div>
-                <div class="task-details">
-                    <div class="detail-item">
-                        <span class="detail-label">Issue:</span>
-                        <span>607 messages exceeded 200K context limit</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Fallback 1:</span>
-                        <span>GPT-4o (OpenAI)</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Fallback 2:</span>
-                        <span>Claude Sonnet 4</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="task">
-                <div class="task-header">
-                    <div class="task-title">🛡️ Security Audit & Hardening</div>
-                    <div class="task-time">Feb 18, 2026</div>
-                </div>
-                <div class="task-desc">Ran deep security audit and fixed critical issues</div>
-                <div class="task-details">
-                    <div class="detail-item">
-                        <span class="detail-label">Score:</span>
-                        <span style="color: var(--success);">A (5 passed, 2 fixed)</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Fixed:</span>
-                        <span>Config permissions (644→600)</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Verified:</span>
-                        <span>SSH hardened, localhost binding, auto-updates</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <footer>
-            <p>Installation by <a href="https://openclawinstall.net">OpenClaw Install</a></p>
-            <p style="margin-top: 0.5rem;">Support: <a href="https://t.me/RShuken">@RShuken</a></p>
-        </footer>
+    <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; color: #7f8c8d;">
+        <p>🦞 Londyn · Powered by <a href="https://openclawinstall.net" style="color: #8b5cf6;">OpenClaw Install</a></p>
+        <p style="margin-top: 10px;">
+            <a href="guide.html" style="color: #8b5cf6;">← Back to Guide</a> · 
+            <a href="security-report.html" style="color: #8b5cf6;">View Security Report →</a>
+        </p>
     </div>
 </body>
 </html>
