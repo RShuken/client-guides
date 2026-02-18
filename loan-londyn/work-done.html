@@ -162,7 +162,46 @@
             </ul>
 
             <h4>Result</h4>
-            <p>Fallback chain now works correctly: <strong>Claude Opus → GPT-4o → Claude Sonnet</strong>. When Anthropic rate limits hit, GPT-4o will properly take over.</p>
+            <p>GPT-4o was registered in the models config but still wasn't working — see next fix.</p>
+        </div>
+    </details>
+
+    <!-- ─── Feb 18: OpenAI Environment Fix ─── -->
+    <details class="work-item" open>
+        <summary>
+            <span class="work-date">Feb 18, 2026 — 4:22 PM MST</span>
+            <span class="work-title">🔧 OpenAI API Key Not In Gateway Environment</span>
+            <span class="badge badge-fix">FIX</span>
+        </summary>
+        <div class="details-body">
+            <h4>Problem</h4>
+            <p>Even after adding GPT-4o to the models config, the fallback still wasn't working. Investigation revealed the gateway process <strong>didn't have <code>OPENAI_API_KEY</code> in its environment</strong>.</p>
+
+            <h4>Root Cause</h4>
+            <div class="code-block">
+                <strong>The key was in ~/.bashrc:</strong><br>
+                <code>export OPENAI_API_KEY="sk-proj-..."</code><br><br>
+                <strong>But the gateway was started before .bashrc was updated, or via a non-login shell that didn't source .bashrc.</strong><br><br>
+                <span class="command">cat /proc/$(pgrep openclaw-gatewa)/environ | grep OPENAI</span><br>
+                <code># No output - key missing!</code>
+            </div>
+
+            <h4>Fixes Applied</h4>
+            <ol>
+                <li>Restarted gateway with <code>OPENAI_API_KEY</code> explicitly set</li>
+                <li>Created persistent environment config at <code>~/.config/environment.d/openclaw.conf</code></li>
+            </ol>
+
+            <div class="code-block">
+                <span class="command">pkill -f openclaw</span><br>
+                <span class="command">export OPENAI_API_KEY=$(cat ~/.openclaw/credentials/openai-api-key)</span><br>
+                <span class="command">nohup openclaw gateway &</span><br><br>
+                <strong>Persistent config:</strong><br>
+                <span class="command">echo "OPENAI_API_KEY=$(cat ~/.openclaw/credentials/openai-api-key)" > ~/.config/environment.d/openclaw.conf</span>
+            </div>
+
+            <h4>Result</h4>
+            <p>Fallback chain now fully functional: <strong>Claude Opus → GPT-4o → Claude Sonnet</strong>. When Anthropic hits rate limits, GPT-4o will properly take over.</p>
         </div>
     </details>
 
