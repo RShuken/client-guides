@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon - Security Report</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        header {
+            text-align: center;
+            padding: 3rem 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+        .score-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--success), #16a34a);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        .subtitle { color: var(--text-muted); }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .card h2 {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .check-item:last-child { border-bottom: none; }
+        .check-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+        .check-icon.success { background: var(--success); }
+        .check-icon.fixed { background: var(--primary); }
+        .check-icon.info { background: var(--info); }
+        .check-icon.warning { background: var(--warning); }
+        .check-content { flex: 1; }
+        .check-title { font-weight: 600; }
+        .check-desc { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        .stat-value { font-size: 1.5rem; font-weight: 700; }
+        .stat-label { color: var(--text-muted); font-size: 0.8rem; }
+        .stat-value.success { color: var(--success); }
+        .stat-value.fixed { color: var(--primary); }
+        .stat-value.info { color: var(--info); }
+        .stat-value.warning { color: var(--warning); }
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        a { color: var(--primary); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="score-badge">A</div>
+            <h1>Security Report</h1>
+            <p class="subtitle">Neon • Audited 2026-02-18</p>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-value success">7</div>
+                <div class="stat-label">Passed</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value fixed">0</div>
+                <div class="stat-label">Fixed</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value info">1</div>
+                <div class="stat-label">Info</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value warning">0</div>
+                <div class="stat-label">Warnings</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🔧 Issues Fixed</h2>
+            <p style="color: var(--text-muted); padding: 1rem 0;">No issues required fixing — system was already well-configured.</p>
+        </div>
+
+        <div class="card">
+            <h2>✅ Passed Checks</h2>
+            <div class="check-item">
+                <div class="check-icon success">✓</div>
+                <div class="check-content">
+                    <div class="check-title">SSH Key-Only Authentication</div>
+                    <div class="check-desc">Password authentication disabled, key-only access enforced</div>
+                </div>
+            </div>
+            <div class="check-item">
+                <div class="check-icon success">✓</div>
+                <div class="check-content">
+                    <div class="check-title">Root Login Disabled</div>
+                    <div class="check-desc">Direct root SSH access is prohibited</div>
+                </div>
+            </div>
+            <div class="check-item">
+                <div class="check-icon success">✓</div>
+                <div class="check-content">
+                    <div class="check-title">Firewall Active (UFW)</div>
+                    <div class="check-desc">Default deny incoming, only SSH (port 22) allowed</div>
+                </div>
+            </div>
+            <div class="check-item">
+                <div class="check-icon success">✓</div>
+                <div class="check-content">
+                    <div class="check-title">OpenClaw Gateway Secured</div>
+                    <div class="check-desc">Gateway bound to localhost only, not exposed to network</div>
+                </div>
+            </div>
+            <div class="check-item">
+                <div class="check-icon success">✓</div>
+                <div class="check-content">
+                    <div class="check-title">Automatic Security Updates</div>
+                    <div class="check-desc">unattended-upgrades installed and active</div>
+                </div>
+            </div>
+            <div class="check-item">
+                <div class="check-icon success">✓</div>
+                <div class="check-content">
+                    <div class="check-title">Minimal Shell Users</div>
+                    <div class="check-desc">Only root and texidor_photo have shell access</div>
+                </div>
+            </div>
+            <div class="check-item">
+                <div class="check-icon success">✓</div>
+                <div class="check-content">
+                    <div class="check-title">OpenClaw Security Audit</div>
+                    <div class="check-desc">0 critical issues, 0 warnings from OpenClaw audit</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>💡 Optional Improvements</h2>
+            <div class="check-item">
+                <div class="check-icon info">i</div>
+                <div class="check-content">
+                    <div class="check-title">Fail2ban (SSH Brute Force Protection)</div>
+                    <div class="check-desc">Consider installing fail2ban for additional SSH protection against brute force attacks</div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Security audit by <a href="https://openclawinstall.net">OpenClaw Install</a></p>
+            <p style="margin-top: 0.5rem;">Score: 9/10 (A)</p>
+        </footer>
+    </div>
+</body>
+</html>
