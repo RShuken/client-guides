@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Your AI Assistant: Clawd -- Getting Started Guide</title>
+<title>Your AI Assistant: P -- Getting Started Guide</title>
 <style>
   /* -- Reset & Base -- */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -319,10 +319,11 @@
 <!-- -- Navigation -- -->
 <nav>
   <div class="nav-inner">
-    <div class="brand">Clawd <span>-- your AI assistant</span></div>
+    <div class="brand">P <span>-- your AI assistant</span></div>
     <button class="menu-toggle" onclick="document.querySelector('nav ul').classList.toggle('open')" aria-label="Menu">Menu</button>
     <ul>
       <li><a href="#about">About</a></li>
+      <li><a href="#rvfto">RVFTO</a></li>
       <li><a href="#getting-started">Get Started</a></li>
       <li><a href="#stack">The Stack</a></li>
       <li><a href="#knowledge">Knowledge Base</a></li>
@@ -337,9 +338,9 @@
 <!-- -- Hero -- -->
 <header class="hero">
   <div class="hero-content animate">
-    <div class="hero-badge">Your AI Assistant -- Live as of 2026-04-18</div>
-    <h1>Meet <em>Clawd</em></h1>
-    <p>A private AI assistant that lives on your ThinkPad, answers on your phone, and keeps your data on your machine by default.</p>
+    <div class="hero-badge">Your AI Assistant -- Updated 2026-04-19</div>
+    <h1>Meet <em>P</em></h1>
+    <p>Your private AI assistant and full-stack coding partner. Lives on your ThinkPad, answers on your phone, builds shipping software with you.</p>
     <a href="#getting-started" class="hero-cta">Get Started</a>
   </div>
 </header>
@@ -347,10 +348,10 @@
 <!-- -- About -- -->
 <section id="about">
   <div class="container">
-    <span class="section-label">What Clawd Is</span>
+    <span class="section-label">What P Is</span>
     <h2 class="section-title">Your personal AI -- everywhere you are</h2>
     <p class="section-subtitle">
-      Clawd is a private AI assistant configured specifically for you.
+      P is a private AI assistant configured specifically for you.
       It answers you on Telegram, thinks with cloud-grade reasoning when it helps,
       falls back to a local model on your laptop when it doesn't need the cloud,
       and remembers what you share with it -- in a knowledge base that never leaves your machine.
@@ -360,7 +361,7 @@
       <div class="feature-card">
         <div class="feature-icon">Chat</div>
         <h3>Talk to it on Telegram</h3>
-        <p>Message @PauloradoBot from your phone, your laptop, anywhere Telegram runs. Clawd replies in seconds.</p>
+        <p>Message @PauloradoBot from your phone, your laptop, anywhere Telegram runs. P replies in seconds.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">Brain</div>
@@ -370,7 +371,7 @@
       <div class="feature-card">
         <div class="feature-icon">KB</div>
         <h3>Private knowledge base</h3>
-        <p>Drop a link, Clawd saves it. Ask a question later, Clawd searches your saved content with real semantic understanding -- all local, no API calls.</p>
+        <p>Drop a link, P saves it. Ask a question later, P searches your saved content with real semantic understanding -- all local, no API calls.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">Lock</div>
@@ -380,19 +381,78 @@
       <div class="feature-card">
         <div class="feature-icon">Gate</div>
         <h3>Safety gates built in</h3>
-        <p>Before Clawd does anything risky -- sending a message, deleting a file, touching the registry, running a downloaded binary -- it asks first.</p>
+        <p>Before P does anything risky -- sending a message, deleting a file, touching the registry, running a downloaded binary -- it asks first.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">24/7</div>
         <h3>Always-on, no terminal required</h3>
-        <p>Clawd runs as a background service on your ThinkPad. Survives reboots, sleep, and closed terminal windows. No "keep this open" dance.</p>
+        <p>P runs as a background service on your ThinkPad. Survives reboots, sleep, and closed terminal windows. No "keep this open" dance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- -- RVFTO showcase -- -->
+<section id="rvfto" class="alt-bg">
+  <div class="container">
+    <span class="section-label">What You've Been Building With P</span>
+    <h2 class="section-title">RVFTO -- your rooftop discovery platform</h2>
+    <p class="section-subtitle">
+      As of 2026-04-19, P is helping you ship a real, live product at <strong>rvfto.com</strong>:
+      a weather-aware, time-of-day-aware guide to the best rooftops in Denver.
+    </p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">15</div>
+        <h3>15 curated Denver venues</h3>
+        <p>Rooftop restaurants, bars, lounges, pools, hotels, and terrace experiences. Each with editorial note, best-for tags, sunset score, shade score, seasonal hours.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">Rank</div>
+        <h3>"Best-for-now" live ranking</h3>
+        <p>Live Denver weather + time of day + shade + vibe + editorial weight feed a scoring model that ranks every venue for right now. Homepage preview controls let you re-rank for sunset / hot-afternoon / cool-evening / windy-night scenarios.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">Admin</div>
+        <h3>Admin panel + reviews</h3>
+        <p>Internal review admin at <code style="background:#fef3c7;color:#92400e;padding:2px 7px;border-radius:5px;font-family:'SF Mono',monospace;font-size:0.85rem;">/admin</code> to create/list/delete. Ratings seeded for 5 starter venues. Venue images standardized at 1600x900 local assets.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">Stack</div>
+        <h3>Next.js 16 + Supabase + Vercel</h3>
+        <p>Next.js 16.2.4 App Router, React 19, TypeScript, Tailwind 4. Supabase Postgres via pooler URI. Deployed on Vercel (team scope <code style="background:#fef3c7;color:#92400e;padding:2px 7px;border-radius:5px;font-family:'SF Mono',monospace;font-size:0.8rem;">paul-rodriguezs-projects-b00cbcc3</code>).</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">Disc</div>
+        <h3>Product discipline</h3>
+        <p>You've written a proper PRD, MVP plan, seed notes, and a phased roadmap. Phase 1 is the Denver directory. Phase 2 is shade/comfort intelligence. Phase 3 is monetization and expansion.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">Git</div>
+        <h3>Real commit discipline</h3>
+        <p>Every shipped change gets a commit hash P tracks in its daily memory: ranking layer, trust summary, Maps links, preview controls, image normalization, reviews flow, filter gaps, admin page.</p>
+      </div>
+    </div>
+
+    <div class="quick-start">
+      <div class="qs-icon">&gt;_</div>
+      <div class="qs-content">
+        <h3>P works as your engineer, not just your chat bot</h3>
+        <p>
+          P edits your Next.js code directly in the workspace, writes SQL migrations,
+          debugs Supabase connection issues, fixes image-hotlink 403s, deploys to Vercel,
+          and writes structured memory files so nothing gets lost between sessions.
+          This isn't "AI that reminds you to do things" -- it's AI that ships code.
+        </p>
+        <a href="https://rvfto.com" target="_blank" rel="noopener">Visit RVFTO</a>
       </div>
     </div>
   </div>
 </section>
 
 <!-- -- Getting Started -- -->
-<section id="getting-started" class="alt-bg">
+<section id="getting-started">
   <div class="container">
     <span class="section-label">First Message</span>
     <h2 class="section-title">Start chatting in 30 seconds</h2>
@@ -410,13 +470,13 @@
       <li>
         <div class="step-content">
           <h4>Search for <code>@PauloradoBot</code></h4>
-          <p>That's Clawd's Telegram handle. Tap it when it shows up.</p>
+          <p>That's P's Telegram handle. Tap it when it shows up.</p>
         </div>
       </li>
       <li>
         <div class="step-content">
           <h4>Send any message</h4>
-          <p>"Hey Clawd" works fine. First response may take 5-10 seconds as the channel warms up.</p>
+          <p>"Hey P" works fine. First response may take 5-10 seconds as the channel warms up.</p>
         </div>
       </li>
       <li>
@@ -430,7 +490,7 @@
     <div class="quick-start">
       <div class="qs-icon">-&gt;</div>
       <div class="qs-content">
-        <h3>That's it. Clawd is live.</h3>
+        <h3>That's it. P is live.</h3>
         <p>Your user ID is already allowlisted, so there's no pairing step, no verification code, no "who are you" friction. Just message and go.</p>
       </div>
     </div>
@@ -469,7 +529,7 @@
         <div class="layer-icon">K</div>
         <div>
           <h4>Your knowledge base: semantic search over saved content</h4>
-          <p>Drop a URL, Clawd reads it, embeds it with nomic-embed-text (also local), and stores it. Later, ask a question -- Clawd searches your saved content by meaning, not keywords, and answers with citations.</p>
+          <p>Drop a URL, P reads it, embeds it with nomic-embed-text (also local), and stores it. Later, ask a question -- P searches your saved content by meaning, not keywords, and answers with citations.</p>
         </div>
         <span class="stack-tag kb">Local KB</span>
       </div>
@@ -490,17 +550,17 @@
       <div class="feature-card">
         <div class="feature-icon">URL</div>
         <h3>Ingest a URL</h3>
-        <p>Send Clawd a link. It fetches the page, strips the HTML, chunks the text into 500-word windows, embeds each one, and files it away. Takes ~3 seconds for a typical article.</p>
+        <p>Send P a link. It fetches the page, strips the HTML, chunks the text into 500-word windows, embeds each one, and files it away. Takes ~3 seconds for a typical article.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">Search</div>
         <h3>Semantic search</h3>
-        <p>Ask "what did I save about X" -- Clawd embeds your question, finds the closest chunks in your KB by meaning, and surfaces them. Not keyword matching -- real conceptual similarity.</p>
+        <p>Ask "what did I save about X" -- P embeds your question, finds the closest chunks in your KB by meaning, and surfaces them. Not keyword matching -- real conceptual similarity.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">RAG</div>
         <h3>Grounded answers</h3>
-        <p>Ask Clawd a question, it retrieves the top-K relevant chunks, hands them to Gemma as context, and generates an answer with numbered citations back to the source URLs. If the retrieved content doesn't have the answer, Clawd says so instead of making something up.</p>
+        <p>Ask P a question, it retrieves the top-K relevant chunks, hands them to Gemma as context, and generates an answer with numbered citations back to the source URLs. If the retrieved content doesn't have the answer, P says so instead of making something up.</p>
       </div>
     </div>
 
@@ -527,13 +587,13 @@
       <div class="priv-box local">
         <h3>Stays on your ThinkPad</h3>
         <ul>
-          <li>Your identity -- how Clawd talks to you, what it knows about you</li>
+          <li>Your identity -- how P talks to you, what it knows about you</li>
           <li>Your knowledge base -- everything you've saved or ingested</li>
           <li>All embeddings (the numeric representations of your content)</li>
           <li>The local Gemma 4 model and its inference</li>
           <li>Conversation memory and context from past chats</li>
-          <li>Logs of what Clawd did (for your own audit)</li>
-          <li>Any file or workspace content Clawd touches</li>
+          <li>Logs of what P did (for your own audit)</li>
+          <li>Any file or workspace content P touches</li>
         </ul>
       </div>
       <div class="priv-box cloud">
@@ -541,7 +601,7 @@
         <ul>
           <li>Telegram messages -- Telegram's infrastructure, same as any chat with anyone</li>
           <li>ChatGPT inference calls -- your prompt + any context you allow, to OpenAI (same as a normal ChatGPT conversation)</li>
-          <li>URL fetches when you ingest a page (Clawd goes and reads the URL)</li>
+          <li>URL fetches when you ingest a page (P goes and reads the URL)</li>
         </ul>
       </div>
     </div>
@@ -549,9 +609,9 @@
     <div style="margin-top: 36px; background: #fff; border: 1px solid #f5f0eb; border-radius: 16px; padding: 28px 32px;">
       <p style="font-size: 0.96rem; color: #57534e; margin-bottom: 12px;">
         <strong style="color: #1c1917;">The important nuance:</strong>
-        Clawd uses GPT-5.4 only when it thinks the question benefits from it.
+        P uses GPT-5.4 only when it thinks the question benefits from it.
         Simple lookups, KB retrieval, and anything embedded-based use the local model.
-        If you're worried about sending something to the cloud, tell Clawd "answer locally" or "keep this private" -- it understands and will stay on the Gemma path.
+        If you're worried about sending something to the cloud, tell P "answer locally" or "keep this private" -- it understands and will stay on the Gemma path.
       </p>
     </div>
   </div>
@@ -560,15 +620,15 @@
 <!-- -- Capabilities -- -->
 <section id="capabilities" class="alt-bg">
   <div class="container">
-    <span class="section-label">What Clawd Can Do</span>
+    <span class="section-label">What P Can Do</span>
     <h2 class="section-title">Capabilities and honest limits</h2>
     <p class="section-subtitle">
-      Two lists. One of things Clawd handles well. One of things it won't pretend to handle.
+      Two lists. One of things P handles well. One of things it won't pretend to handle.
     </p>
 
     <div class="cap-columns">
       <div class="cap-box can">
-        <h3>What Clawd does today</h3>
+        <h3>What P does today</h3>
         <ul>
           <li>Answer questions with cloud-grade reasoning (GPT-5.4)</li>
           <li>Answer questions locally when the cloud isn't needed (Gemma 4)</li>
@@ -582,7 +642,7 @@
         </ul>
       </div>
       <div class="cap-box cant">
-        <h3>What Clawd doesn't do (yet)</h3>
+        <h3>What P doesn't do (yet)</h3>
         <ul>
           <li>Access your email, calendar, or Google Workspace (pending)</li>
           <li>PDF ingestion into the KB (text/HTML only for now)</li>
@@ -602,27 +662,39 @@
 <section id="commands">
   <div class="container">
     <span class="section-label">Natural Phrases</span>
-    <h2 class="section-title">Useful things to say to Clawd</h2>
+    <h2 class="section-title">Useful things to say to P</h2>
     <p class="section-subtitle">
-      These aren't slash commands -- just natural phrases Clawd recognizes.
+      These aren't slash commands -- just natural phrases P recognizes.
     </p>
 
     <table class="cmd-table">
       <thead>
-        <tr><th>What to say</th><th>What Clawd does</th></tr>
+        <tr><th>What to say</th><th>What P does</th></tr>
       </thead>
       <tbody>
         <tr>
+          <td><code>hey p what is the latest?</code></td>
+          <td>Reads its own daily memory file, tells you what you two shipped last, and surfaces any open threads.</td>
+        </tr>
+        <tr>
+          <td><code>deploy RVFTO</code> / <code>ship this to prod</code></td>
+          <td>Runs <code>npx vercel --prod --yes --scope paul-rodriguezs-projects-b00cbcc3</code> from the RVFTO repo. Reports back the deploy URL.</td>
+        </tr>
+        <tr>
+          <td><code>add a filter for &lt;X&gt;</code></td>
+          <td>Edits the Next.js code in <code>workspace/RVFTO/</code>, writes a commit, and tells you the commit hash.</td>
+        </tr>
+        <tr>
           <td><code>save this: &lt;URL&gt;</code></td>
-          <td>Fetches, embeds, stores in your KB. Deduplicates if you've saved it before.</td>
+          <td>Fetches, embeds via nomic, stores in your KB. Deduplicates if you've saved it before.</td>
         </tr>
         <tr>
           <td><code>what did I save about X?</code></td>
-          <td>Searches your KB semantically, returns top matches with source URLs.</td>
+          <td>Semantic search over your KB, returns top matches with source URLs.</td>
         </tr>
         <tr>
           <td><code>summarize what I know about Y</code></td>
-          <td>Full RAG pipeline -- retrieves relevant chunks, asks the model to summarize with citations.</td>
+          <td>Full RAG: retrieves relevant chunks, asks the model to summarize with numbered citations.</td>
         </tr>
         <tr>
           <td><code>answer this locally</code></td>
@@ -632,29 +704,21 @@
           <td><code>humanize this: &lt;text&gt;</code></td>
           <td>Runs the humanizer skill to strip AI-tells from writing (em-dashes, "delves into", etc.).</td>
         </tr>
-        <tr>
-          <td><code>what can you do?</code></td>
-          <td>Clawd lists its current capabilities, honestly.</td>
-        </tr>
-        <tr>
-          <td><code>forget that</code></td>
-          <td>Tells Clawd to not remember the last thing you mentioned.</td>
-        </tr>
       </tbody>
     </table>
 
     <div class="tip-grid">
       <div class="tip">
         <div class="tip-icon">*</div>
-        <p><strong>Be direct.</strong> Clawd was set up with a "sardonic, direct, loyal" personality. Short clear prompts beat polite paragraphs.</p>
+        <p><strong>Be direct.</strong> P was set up with a "sardonic, direct, loyal" personality. Short clear prompts beat polite paragraphs.</p>
       </div>
       <div class="tip">
         <div class="tip-icon">*</div>
-        <p><strong>Show, don't tell.</strong> If you want a particular output format, give Clawd one small example. Beats a paragraph of instructions.</p>
+        <p><strong>Show, don't tell.</strong> If you want a particular output format, give P one small example. Beats a paragraph of instructions.</p>
       </div>
       <div class="tip">
         <div class="tip-icon">*</div>
-        <p><strong>Before risky things, it will ask.</strong> If you want something destructive -- delete a file, send a message, run something downloaded -- Clawd will show the exact command and wait for "yes."</p>
+        <p><strong>Before risky things, it will ask.</strong> If you want something destructive -- delete a file, send a message, run something downloaded -- P will show the exact command and wait for "yes."</p>
       </div>
     </div>
   </div>
@@ -670,25 +734,29 @@
     </p>
 
     <div class="spec-grid">
+      <div class="spec-item"><div class="spec-label">Agent name</div><div class="spec-value">P</div></div>
       <div class="spec-item"><div class="spec-label">Host</div><div class="spec-value">WorkerBee303</div></div>
       <div class="spec-item"><div class="spec-label">OS</div><div class="spec-value">Windows 11 Pro</div></div>
       <div class="spec-item"><div class="spec-label">CPU</div><div class="spec-value">i7-1185G7</div></div>
       <div class="spec-item"><div class="spec-label">RAM</div><div class="spec-value">32 GB</div></div>
       <div class="spec-item"><div class="spec-label">Timezone</div><div class="spec-value">America/Denver</div></div>
-      <div class="spec-item"><div class="spec-label">OpenClaw version</div><div class="spec-value">2026.4.15</div></div>
+      <div class="spec-item"><div class="spec-label">OpenClaw</div><div class="spec-value">v2026.4.15</div></div>
       <div class="spec-item"><div class="spec-label">Primary model</div><div class="spec-value">openai-codex/gpt-5.4</div></div>
       <div class="spec-item"><div class="spec-label">Fallback model</div><div class="spec-value">gemma4:e2b (local)</div></div>
-      <div class="spec-item"><div class="spec-label">Embedder</div><div class="spec-value">nomic-embed-text (768-dim)</div></div>
-      <div class="spec-item"><div class="spec-label">Messaging</div><div class="spec-value">@PauloradoBot (Telegram)</div></div>
+      <div class="spec-item"><div class="spec-label">Embedder</div><div class="spec-value">nomic-embed-text</div></div>
+      <div class="spec-item"><div class="spec-label">Messaging</div><div class="spec-value">@PauloradoBot</div></div>
       <div class="spec-item"><div class="spec-label">Auth</div><div class="spec-value">ChatGPT OAuth</div></div>
-      <div class="spec-item"><div class="spec-label">Background service</div><div class="spec-value">Windows Task Scheduler</div></div>
+      <div class="spec-item"><div class="spec-label">Background service</div><div class="spec-value">Win Task Scheduler</div></div>
+      <div class="spec-item"><div class="spec-label">RVFTO stack</div><div class="spec-value">Next.js 16 + React 19</div></div>
+      <div class="spec-item"><div class="spec-label">RVFTO DB</div><div class="spec-value">Supabase Postgres</div></div>
+      <div class="spec-item"><div class="spec-label">RVFTO deploy</div><div class="spec-value">Vercel (via npx)</div></div>
     </div>
 
     <div style="margin-top: 32px;">
       <h3 style="font-size: 1.1rem; font-weight: 700; color: #1c1917; margin-bottom: 16px;">Skills installed</h3>
       <ul style="list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px;">
-        <li style="background: #fff; border: 1px solid #f5f0eb; border-radius: 10px; padding: 12px 16px; font-size: 0.92rem;"><strong style="color: #92400e;">client-identity</strong> -- who Clawd is, who it serves</li>
-        <li style="background: #fff; border: 1px solid #f5f0eb; border-radius: 10px; padding: 12px 16px; font-size: 0.92rem;"><strong style="color: #92400e;">gpt-prompt-guide</strong> -- GPT-5 prompting tips Clawd uses</li>
+        <li style="background: #fff; border: 1px solid #f5f0eb; border-radius: 10px; padding: 12px 16px; font-size: 0.92rem;"><strong style="color: #92400e;">client-identity</strong> -- who P is, who it serves</li>
+        <li style="background: #fff; border: 1px solid #f5f0eb; border-radius: 10px; padding: 12px 16px; font-size: 0.92rem;"><strong style="color: #92400e;">gpt-prompt-guide</strong> -- GPT-5 prompting tips P uses</li>
         <li style="background: #fff; border: 1px solid #f5f0eb; border-radius: 10px; padding: 12px 16px; font-size: 0.92rem;"><strong style="color: #92400e;">windows-approval-gates</strong> -- asks before risky Windows actions</li>
         <li style="background: #fff; border: 1px solid #f5f0eb; border-radius: 10px; padding: 12px 16px; font-size: 0.92rem;"><strong style="color: #92400e;">humanizer</strong> -- strips AI writing tells</li>
         <li style="background: #fff; border: 1px solid #f5f0eb; border-radius: 10px; padding: 12px 16px; font-size: 0.92rem;"><strong style="color: #92400e;">kb-nomic</strong> -- your private knowledge base</li>
@@ -705,37 +773,37 @@
 
     <div class="faq-list">
       <details class="faq-item">
-        <summary>Does Clawd cost me anything per message?</summary>
+        <summary>Does P cost me anything per message?</summary>
         <div class="faq-body">
-          Not directly. You already pay for ChatGPT; Clawd uses that subscription's included Codex credits for cloud-brain calls. The local Gemma model is free forever. Telegram is free. So the marginal cost of most messages is zero. The only way you'd incur extra spend is if you hooked Clawd up to a paid API (we haven't done that yet).
+          Not directly. You already pay for ChatGPT; P uses that subscription's included Codex credits for cloud-brain calls. The local Gemma model is free forever. Telegram is free. So the marginal cost of most messages is zero. The only way you'd incur extra spend is if you hooked P up to a paid API (we haven't done that yet).
         </div>
       </details>
 
       <details class="faq-item">
         <summary>What happens if my ChatGPT credits run out?</summary>
         <div class="faq-body">
-          Clawd automatically falls back to Gemma 4 on your laptop. You'll notice answers get a little slower and a little less polished, but nothing breaks. When your credits reset (next billing period), Clawd goes back to using the cloud brain for hard questions.
+          P automatically falls back to Gemma 4 on your laptop. You'll notice answers get a little slower and a little less polished, but nothing breaks. When your credits reset (next billing period), P goes back to using the cloud brain for hard questions.
         </div>
       </details>
 
       <details class="faq-item">
         <summary>What if my laptop is off?</summary>
         <div class="faq-body">
-          Then Clawd is off. Everything lives on your ThinkPad -- both the local model and the knowledge base. Telegram will still accept your message and queue it, but Clawd can't respond until the laptop is awake. This is the main tradeoff of a private, on-device setup.
+          Then P is off. Everything lives on your ThinkPad -- both the local model and the knowledge base. Telegram will still accept your message and queue it, but P can't respond until the laptop is awake. This is the main tradeoff of a private, on-device setup.
         </div>
       </details>
 
       <details class="faq-item">
         <summary>Is my knowledge base really private?</summary>
         <div class="faq-body">
-          Yes. The file lives at <code>C:\Users\paul\.openclaw\workspace\kb\store.jsonl</code>. Embeddings are computed locally by nomic-embed-text. Searches happen locally. Nothing from your KB leaves your machine -- unless you explicitly ask Clawd to include a saved snippet in a cloud-brain answer, in which case that snippet goes to the cloud brain along with your question (just like if you pasted it into ChatGPT yourself).
+          Yes. The file lives at <code>C:\Users\paul\.openclaw\workspace\kb\store.jsonl</code>. Embeddings are computed locally by nomic-embed-text. Searches happen locally. Nothing from your KB leaves your machine -- unless you explicitly ask P to include a saved snippet in a cloud-brain answer, in which case that snippet goes to the cloud brain along with your question (just like if you pasted it into ChatGPT yourself).
         </div>
       </details>
 
       <details class="faq-item">
-        <summary>Can I change Clawd's name or personality?</summary>
+        <summary>Can I change P's name or personality?</summary>
         <div class="faq-body">
-          Yes. Clawd's current identity is a placeholder ("lobster energy, sardonic, direct"). Next time we chat, we can swap the name, emoji, tone, humor level, and no-go topics to whatever you want. The identity lives in a single text file Clawd reads every conversation -- easy to edit.
+          Yes. P's current identity is a placeholder ("lobster energy, sardonic, direct"). Next time we chat, we can swap the name, emoji, tone, humor level, and no-go topics to whatever you want. The identity lives in a single text file P reads every conversation -- easy to edit.
         </div>
       </details>
 
@@ -747,9 +815,9 @@
       </details>
 
       <details class="faq-item">
-        <summary>What if Clawd says something wrong?</summary>
+        <summary>What if P says something wrong?</summary>
         <div class="faq-body">
-          Tell Clawd. It'll correct itself and remember the correction. More broadly: Clawd isn't perfect. For anything that matters (medical, financial, legal), verify the answer against an authoritative source before acting on it. Clawd should already hedge on uncertain topics; if it's overconfident, push back.
+          Tell P. It'll correct itself and remember the correction. More broadly: P isn't perfect. For anything that matters (medical, financial, legal), verify the answer against an authoritative source before acting on it. P should already hedge on uncertain topics; if it's overconfident, push back.
         </div>
       </details>
 
@@ -763,14 +831,14 @@
       <details class="faq-item">
         <summary>How do I reach Ryan if something breaks?</summary>
         <div class="faq-body">
-          Same way we've been talking -- drop him a message. If Clawd itself is broken, you can also just tell @PauloradoBot what's wrong -- it'll log the symptom, and Ryan has remote access to investigate.
+          Same way we've been talking -- drop him a message. If P itself is broken, you can also just tell @PauloradoBot what's wrong -- it'll log the symptom, and Ryan has remote access to investigate.
         </div>
       </details>
 
       <details class="faq-item">
         <summary>What's next?</summary>
         <div class="faq-body">
-          A few things we haven't done yet but can: personalize Clawd (custom name, tone, no-go topics), add Google Workspace integration, hook up a daily briefing, set up calendar/email awareness, add more skills as you identify specific needs. Nothing is required -- the current setup is complete and useful on its own.
+          A few things we haven't done yet but can: personalize P (custom name, tone, no-go topics), add Google Workspace integration, hook up a daily briefing, set up calendar/email awareness, add more skills as you identify specific needs. Nothing is required -- the current setup is complete and useful on its own.
         </div>
       </details>
     </div>
@@ -779,7 +847,7 @@
 
 <!-- -- Footer -- -->
 <footer>
-  <div class="footer-brand">Clawd</div>
+  <div class="footer-brand">P</div>
   <p>Your private AI assistant</p>
   <div class="footer-divider"></div>
   <p class="footer-note">Deployed 2026-04-17 / 2026-04-18 by Ryan Shuken at <a href="https://openclawinstall.net">openclawinstall.net</a></p>

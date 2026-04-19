@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clawd Work Done - Paul Rodriguez</title>
+<title>P Work Done - Paul Rodriguez</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -102,19 +102,84 @@
 </head>
 <body>
 
-<h1>Clawd <em>Work Done</em> Log</h1>
-<p class="subtitle">Everything deployed for Paul Rodriguez on WorkerBee303 -- 2026-04-17 through 2026-04-18</p>
+<h1>P <em>Work Done</em> Log</h1>
+<p class="subtitle">Install work 2026-04-17 / 18 (Ryan) + real usage with Paul starting 2026-04-18 -- refreshed 2026-04-19</p>
 
 <div class="summary-box">
   <h3>TL;DR</h3>
   <p>
-    Two-day engagement. Started with a Windows 11 ThinkPad with an unconfigured OpenClaw install.
-    Finished with a fully operational private AI stack: Codex (ChatGPT OAuth) as primary brain,
-    Gemma 4 on local CPU as fallback, Telegram bot for chat, a private knowledge base with real
-    semantic search, and a permanent background service that survives reboots. Everything tested
-    end-to-end with real messages.
+    Three-day picture. <strong>Days 1-2</strong>: Ryan bootstrapped the stack -- Codex (ChatGPT OAuth)
+    as primary brain, Gemma 4 on local CPU as fallback, Telegram bot for chat, private knowledge base with
+    semantic search, Windows scheduled-task service. <strong>Days 2-3</strong>: Paul picked it up
+    and has been using P as a full-stack coding partner to build and ship
+    <strong>RVFTO</strong> (rooftop discovery platform) -- a real Next.js + Supabase + Vercel product now live at rvfto.com.
   </p>
 </div>
+
+<h2>What Paul has built with P (2026-04-18 / 19)</h2>
+
+<details class="work-item" open>
+  <summary><strong>RVFTO</strong> -- rvfto.com, rooftop discovery for Denver <span class="status-pill ok">Live on Vercel</span></summary>
+  <div class="detail-body">
+    <p>Paul is using P as a coding teammate to build a real product. As of 2026-04-19, RVFTO is deployed and functional at <code>rvfto.com</code>.</p>
+
+    <h3 style="font-size:0.95rem;">Stack</h3>
+    <ul>
+      <li>Next.js 16.2.4 (App Router) + React 19.2.4 + TypeScript 5 + Tailwind CSS 4</li>
+      <li>Supabase Postgres (connected via transaction pooler URI after REST API key auth failed)</li>
+      <li>Vercel deploys under team scope <code>paul-rodriguezs-projects-b00cbcc3</code></li>
+      <li>Repo path on Paul's box: <code>C:\Users\paul\.openclaw\workspace\RVFTO\</code></li>
+    </ul>
+
+    <h3 style="font-size:0.95rem;">Product discipline</h3>
+    <ul>
+      <li>Real <code>PRD.md</code> and <code>MVP.md</code> -- phased roadmap (Phase 1 Denver directory, Phase 2 shade/comfort intelligence, Phase 3 monetization/expansion)</li>
+      <li><code>schema.sql</code> as source of truth; <code>MIGRATION-002-ranking-fields.sql</code> for ranking-schema follow-up</li>
+      <li><code>SEED_NOTES.md</code> tracks Denver curation decisions</li>
+      <li>Data pipeline: TS seeds -> JSON source of truth -> Supabase import scripts (<code>seed-to-json.mjs</code>, <code>json-to-supabase.mjs</code>, <code>import-to-supabase.mjs</code>, <code>apply-schema-and-import.mjs</code>)</li>
+    </ul>
+
+    <h3 style="font-size:0.95rem;">Shipped features (commit hashes from P's memory)</h3>
+    <ul>
+      <li><strong>V1 "best-for-now" ranking layer</strong> -- live Denver weather + time-of-day + shade + vibe + editorial weight. Homepage + <code>/venues</code> + venue-detail pages all score-aware.</li>
+      <li><strong>Venue detail trust summary</strong> -- score reasons, open-now, late-night fit, weather resilience, current conditions <em>(c182a8d)</em></li>
+      <li><strong>Tappable Google Maps address links</strong> on venue detail pages <em>(3e9c37a)</em></li>
+      <li><strong>Homepage preview controls</strong> for live / sunset / hot-afternoon / cool-evening / windy-night scenarios -- cards re-rank live <em>(48ab1df)</em></li>
+      <li><strong>Venue image pipeline</strong> migrated to local 1600x900 standardized assets under <code>public/images/venues/</code> after hotlink-403 pain <em>(777dda83)</em></li>
+      <li><strong>Ratings and reviews flow</strong> shipped; 5 starter reviews seeded for Sorry Gorgeous, El Five, Avanti, 54thirty, Rare Bird <em>(006347f)</em></li>
+      <li><strong>Removed Happy Camper</strong> from source data and live DB (not a rooftop venue) <em>(8f53d9e)</em></li>
+      <li><strong>MVP venue filters</strong> -- open now, heated outdoor, seasonal notes, weather comfort threshold <em>(3b3bc07)</em></li>
+      <li><strong>Internal admin page</strong> at <code>/admin</code> -- review create/list/delete; login flow with server actions <em>(056c74a)</em></li>
+    </ul>
+
+    <h3 style="font-size:0.95rem;">Open threads (from P's memory, 2026-04-19)</h3>
+    <ul>
+      <li>Dark primary button contrast issue -- screenshots provided, fix pending</li>
+      <li>Domain routing check needed -- ensure <code>rvfto.com</code> and <code>www.rvfto.com</code> both point to the same Vercel target with a canonical redirect</li>
+      <li>Several Denver venues still on placeholder images; custom images queued</li>
+    </ul>
+  </div>
+</details>
+
+<details class="work-item">
+  <summary><strong>Daily memory files</strong> -- P writes structured session summaries <span class="status-pill ok">Working</span></summary>
+  <div class="detail-body">
+    <p>P writes a dated markdown file to <code>workspace/memory/</code> each active day. Structured bullet summaries of decisions, commits, shipped features, and open threads -- so nothing gets lost between sessions.</p>
+    <ul>
+      <li><code>2026-04-18.md</code> (2.4 KB) -- the day Paul bootstrapped and set agent name to P</li>
+      <li><code>2026-04-19-0932.md</code> (5.2 KB), <code>2026-04-19-1920.md</code> (5.4 KB), <code>2026-04-19.md</code> (4.4 KB) -- three sessions on the 19th, capturing RVFTO work in detail</li>
+    </ul>
+    <p>These files are what P reads first on every new conversation -- they replace the "where did we leave off" ritual.</p>
+  </div>
+</details>
+
+<details class="work-item">
+  <summary><strong>P's identity</strong> -- agent renamed to "P" <span class="status-pill ok">Live</span></summary>
+  <div class="detail-body">
+    <p>Paul renamed the agent from the stock "Clawd" to <strong>"P"</strong> -- minimalist, typed fast, no flinching when calling it in Telegram. The rest of the persona ("lobster energy" creature, sardonic tone, sharp-coworker vibe) is unchanged from the template.</p>
+    <p>USER.md is lightly filled: <em>Name: Paul Rodriguez / What to call them: Paul / Timezone: America/Denver / Notes: Prefers a sharp coworker vibe.</em></p>
+  </div>
+</details>
 
 <h2>Final system state</h2>
 <table class="timeline-table">
@@ -140,10 +205,10 @@
 <h2>Skills deployed</h2>
 
 <details class="work-item" open>
-  <summary><strong>client-identity</strong> -- Clawd's persona <span class="status-pill ok">Deployed</span></summary>
+  <summary><strong>client-identity</strong> -- P's persona <span class="status-pill ok">Deployed</span></summary>
   <div class="detail-body">
     <p>Custom SKILL.md that tells the agent how to introduce itself, how to speak, and who it's serving.
-    Currently using stock "Clawd" persona (lobster-themed, sardonic, direct). Can be swapped to a custom name/tone any time.</p>
+    Currently using stock "P" persona (lobster-themed, sardonic, direct). Can be swapped to a custom name/tone any time.</p>
     <ul>
       <li>Location: <code>C:\Users\paul\.openclaw\workspace\skills\client-identity\SKILL.md</code></li>
       <li>Serves: Paul in America/Denver timezone</li>
@@ -169,7 +234,7 @@
 <details class="work-item">
   <summary><strong>windows-approval-gates</strong> -- safety for destructive actions <span class="status-pill ok">Deployed</span></summary>
   <div class="detail-body">
-    <p>Five gated action categories. Before Clawd does anything in these categories,
+    <p>Five gated action categories. Before P does anything in these categories,
     it pauses, shows you the command + rollback plan, and waits for approval.</p>
     <ul>
       <li>Outbound messages (emails, posts, DMs to unknown recipients)</li>
@@ -190,7 +255,7 @@
     <ul>
       <li>Source: ClawHub registry, <code>openclaw skills install humanizer</code></li>
       <li>Version 1.0.0 / 2.1.1 per SKILL metadata</li>
-      <li>Activate: ask Clawd to "humanize this" and paste your text</li>
+      <li>Activate: ask P to "humanize this" and paste your text</li>
     </ul>
   </div>
 </details>
@@ -231,7 +296,7 @@
     <tr><td>22:10</td><td>First Foundation Pack deploy attempt hit PTY deadlock (chunked-upload anti-pattern)</td></tr>
     <tr><td>22:45</td><td>Learned Windows ConPTY handles ~7KB single-shot commands; documented</td></tr>
     <tr><td>23:10</td><td>Foundation Pack deployed (3 custom SKILLs + humanizer from ClawHub)</td></tr>
-    <tr><td>23:25</td><td>End-to-end test: agent returned "Clawd / lobster emoji / America/Denver / OK-FOUNDATION-OK" -- proved SKILLs auto-loaded into context</td></tr>
+    <tr><td>23:25</td><td>End-to-end test: agent returned "P / lobster emoji / America/Denver / OK-FOUNDATION-OK" -- proved SKILLs auto-loaded into context</td></tr>
   </tbody>
 </table>
 
@@ -262,9 +327,9 @@
 <h2>What's not done (and why)</h2>
 
 <details class="work-item">
-  <summary>Personalize Clawd's identity <span class="status-pill pending">Pending</span></summary>
+  <summary>Personalize P's identity <span class="status-pill pending">Pending</span></summary>
   <div class="detail-body">
-    <p>Clawd is currently using the stock "lobster energy" identity from the template. Takes a ~10-minute intake
+    <p>P is currently using the stock "lobster energy" identity from the template. Takes a ~10-minute intake
     conversation to customize -- name, emoji, creature metaphor, tone, humor style, no-go topics.
     Can do this any time via @PauloradoBot directly.</p>
   </div>
@@ -274,7 +339,7 @@
   <summary>Google Workspace (Gmail / Calendar / Drive) <span class="status-pill deferred">Deferred</span></summary>
   <div class="detail-body">
     <p>The OpenClaw Google Workspace integration uses a Linux/macOS-only CLI tool called <code>gog</code>.
-    Needs a Windows-specific adaptation. Not a blocker today -- if/when you need Clawd to see your email
+    Needs a Windows-specific adaptation. Not a blocker today -- if/when you need P to see your email
     or calendar, we'll build the Windows path.</p>
   </div>
 </details>
