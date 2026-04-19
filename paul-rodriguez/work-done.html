@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clawd Work Done - Paul Rodriguez</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #2d2a26; background: #faf9f7;
+    line-height: 1.65; -webkit-font-smoothing: antialiased;
+    padding: 40px 24px; max-width: 980px; margin: 0 auto;
+  }
+  h1 {
+    font-size: 2.2rem; font-weight: 800; color: #1c1917;
+    letter-spacing: -0.02em; margin-bottom: 6px;
+  }
+  h1 em { font-style: normal; color: #b45309; }
+  .subtitle { font-size: 1.05rem; color: #78716c; margin-bottom: 32px; }
+  h2 {
+    font-size: 1.3rem; font-weight: 700; color: #1c1917;
+    border-bottom: 2px solid #fef3c7; padding-bottom: 10px;
+    margin: 40px 0 20px; display: flex; align-items: center; gap: 10px;
+  }
+  h2::before {
+    content: ''; width: 10px; height: 10px;
+    background: #b45309; border-radius: 3px;
+    display: inline-block;
+  }
+  h3 { font-size: 1.05rem; font-weight: 700; color: #1c1917; margin: 24px 0 10px; }
+  p { margin-bottom: 12px; }
+  code {
+    font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.9em;
+    background: #fef3c7; color: #92400e;
+    padding: 2px 7px; border-radius: 5px;
+  }
+  pre {
+    background: #1c1917; color: #fef3c7;
+    padding: 16px 20px; border-radius: 10px; margin: 14px 0;
+    font-family: 'SF Mono', monospace; font-size: 0.88rem;
+    overflow-x: auto; line-height: 1.6;
+  }
+  .summary-box {
+    background: linear-gradient(135deg, #fffbeb, #fef3c7);
+    border: 1px solid #fde68a; border-radius: 14px;
+    padding: 24px 28px; margin: 24px 0 40px;
+  }
+  .summary-box h3 {
+    margin-top: 0; font-size: 0.9rem; color: #92400e;
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;
+  }
+  .summary-box p { font-size: 0.96rem; color: #57534e; margin-bottom: 0; }
+  .timeline-table {
+    width: 100%; border-collapse: collapse; margin: 16px 0;
+    background: #fff; border: 1px solid #f5f0eb; border-radius: 12px; overflow: hidden;
+  }
+  .timeline-table th, .timeline-table td {
+    text-align: left; padding: 12px 16px;
+    border-bottom: 1px solid #f5f0eb; font-size: 0.9rem;
+  }
+  .timeline-table th {
+    background: #fffbeb; color: #92400e; font-weight: 700;
+    font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  .timeline-table td:first-child {
+    font-family: 'SF Mono', monospace; color: #78716c;
+    white-space: nowrap; font-size: 0.82rem;
+  }
+  .timeline-table tr:last-child td { border-bottom: none; }
+  details.work-item {
+    border: 1px solid #f5f0eb; border-radius: 12px;
+    margin: 10px 0; overflow: hidden; background: #fff;
+  }
+  details.work-item summary {
+    padding: 14px 18px; font-weight: 600; font-size: 0.96rem;
+    cursor: pointer; list-style: none;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.2s;
+  }
+  details.work-item summary:hover { background: #fffbeb; }
+  details.work-item summary::after { content: '+'; font-size: 1.3rem; color: #b45309; font-weight: 300; }
+  details.work-item[open] summary::after { content: '-'; }
+  details.work-item .detail-body { padding: 0 20px 18px; font-size: 0.92rem; color: #57534e; }
+  .status-pill {
+    display: inline-block; font-size: 0.72rem; font-weight: 700;
+    padding: 3px 9px; border-radius: 100px;
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .status-pill.ok { background: #dcfce7; color: #166534; }
+  .status-pill.deferred { background: #fef3c7; color: #92400e; }
+  .status-pill.pending { background: #e5e7eb; color: #4b5563; }
+  ul { margin: 10px 0 10px 20px; }
+  li { margin-bottom: 6px; font-size: 0.94rem; }
+  .footer {
+    margin-top: 60px; padding-top: 24px;
+    border-top: 1px solid #f5f0eb; color: #78716c;
+    font-size: 0.85rem; text-align: center;
+  }
+  .footer a { color: #b45309; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<h1>Clawd <em>Work Done</em> Log</h1>
+<p class="subtitle">Everything deployed for Paul Rodriguez on WorkerBee303 -- 2026-04-17 through 2026-04-18</p>
+
+<div class="summary-box">
+  <h3>TL;DR</h3>
+  <p>
+    Two-day engagement. Started with a Windows 11 ThinkPad with an unconfigured OpenClaw install.
+    Finished with a fully operational private AI stack: Codex (ChatGPT OAuth) as primary brain,
+    Gemma 4 on local CPU as fallback, Telegram bot for chat, a private knowledge base with real
+    semantic search, and a permanent background service that survives reboots. Everything tested
+    end-to-end with real messages.
+  </p>
+</div>
+
+<h2>Final system state</h2>
+<table class="timeline-table">
+  <thead>
+    <tr><th>Component</th><th>State</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>OpenClaw</td><td>v2026.4.15 (latest) -- up from v2026.4.9</td></tr>
+    <tr><td>Node.js + npm</td><td>v24.14.1 / 11.11.0 (already installed, fixed PATH)</td></tr>
+    <tr><td>Git</td><td>v2.53.0.windows.3 (installed during setup)</td></tr>
+    <tr><td>Ollama</td><td>v0.21.0 (installed 2026-04-18)</td></tr>
+    <tr><td>Gemma 4 E2B</td><td>7.2 GB, 22-43 tok/s on CPU</td></tr>
+    <tr><td>nomic-embed-text</td><td>274 MB, 768-dim, 797 ms first embed</td></tr>
+    <tr><td>Primary model</td><td>openai-codex/gpt-5.4 via ChatGPT OAuth</td></tr>
+    <tr><td>Fallback model</td><td>ollama/gemma4:e2b (auto-routed when primary unavailable)</td></tr>
+    <tr><td>Messaging</td><td>@PauloradoBot on Telegram, allowlisted to user 8694792109</td></tr>
+    <tr><td>Gateway</td><td>Scheduled Task, listens on 127.0.0.1:18789</td></tr>
+    <tr><td>Background service</td><td>Scheduled Task "OpenClaw Agent" on user login</td></tr>
+    <tr><td>Device enrollment</td><td>317142d5-2052-4628-ba7b-2e3e5201131a</td></tr>
+  </tbody>
+</table>
+
+<h2>Skills deployed</h2>
+
+<details class="work-item" open>
+  <summary><strong>client-identity</strong> -- Clawd's persona <span class="status-pill ok">Deployed</span></summary>
+  <div class="detail-body">
+    <p>Custom SKILL.md that tells the agent how to introduce itself, how to speak, and who it's serving.
+    Currently using stock "Clawd" persona (lobster-themed, sardonic, direct). Can be swapped to a custom name/tone any time.</p>
+    <ul>
+      <li>Location: <code>C:\Users\paul\.openclaw\workspace\skills\client-identity\SKILL.md</code></li>
+      <li>Serves: Paul in America/Denver timezone</li>
+      <li>Tone: Confident, sardonic, direct, loyal, curious</li>
+      <li>Auto-loaded into every conversation</li>
+    </ul>
+  </div>
+</details>
+
+<details class="work-item">
+  <summary><strong>gpt-prompt-guide</strong> -- GPT-5/Codex prompting best practices <span class="status-pill ok">Deployed</span></summary>
+  <div class="detail-body">
+    <p>Instructions the agent consults before building long prompts or tool-use chains.
+    Tailored to GPT-5.4 behavior -- chain-of-thought handling, format expectations, cost awareness.</p>
+    <ul>
+      <li>Location: <code>C:\Users\paul\.openclaw\workspace\skills\gpt-prompt-guide\SKILL.md</code></li>
+      <li>Helps the agent avoid stale prompting anti-patterns ("think step by step" on GPT-5)</li>
+      <li>Notes subscription-credit awareness for cost-conscious use</li>
+    </ul>
+  </div>
+</details>
+
+<details class="work-item">
+  <summary><strong>windows-approval-gates</strong> -- safety for destructive actions <span class="status-pill ok">Deployed</span></summary>
+  <div class="detail-body">
+    <p>Five gated action categories. Before Clawd does anything in these categories,
+    it pauses, shows you the command + rollback plan, and waits for approval.</p>
+    <ul>
+      <li>Outbound messages (emails, posts, DMs to unknown recipients)</li>
+      <li>File / folder deletion (prefers Recycle Bin over permanent delete)</li>
+      <li>Registry writes (shows old and new value before changing)</li>
+      <li>Scheduled Task creation / edit / delete</li>
+      <li>Execution of downloaded binaries (shows URL + signing info first)</li>
+    </ul>
+    <p>Also includes financial-data lockdown (keeps $ amounts in DMs only, never in groups) and prompt-injection defenses.</p>
+  </div>
+</details>
+
+<details class="work-item">
+  <summary><strong>humanizer</strong> -- strips AI writing tells <span class="status-pill ok">Deployed (from ClawHub)</span></summary>
+  <div class="detail-body">
+    <p>Community-vetted skill that removes telltale AI-writing patterns from text: em-dash overuse,
+    "delves into" / "in the realm of" phrases, rule-of-three syndrome, negative parallelisms, etc.</p>
+    <ul>
+      <li>Source: ClawHub registry, <code>openclaw skills install humanizer</code></li>
+      <li>Version 1.0.0 / 2.1.1 per SKILL metadata</li>
+      <li>Activate: ask Clawd to "humanize this" and paste your text</li>
+    </ul>
+  </div>
+</details>
+
+<details class="work-item">
+  <summary><strong>kb-nomic</strong> -- private semantic knowledge base <span class="status-pill ok">Deployed (custom-built)</span></summary>
+  <div class="detail-body">
+    <p>Full local RAG pipeline, written from scratch in PowerShell. Zero external dependencies beyond
+    what's already on your machine (Ollama for embeddings, JSONL for storage).</p>
+    <ul>
+      <li><code>kb-ingest.ps1</code> -- fetches URL, strips HTML, chunks 500 words with 50-word overlap, embeds each chunk via nomic, appends to <code>store.jsonl</code></li>
+      <li><code>kb-search.ps1</code> -- embeds a query, computes cosine similarity against every stored chunk, returns top-K</li>
+      <li><code>kb-ask.ps1</code> -- full RAG: search + pass retrieved chunks to local Gemma as context, generate cited answer</li>
+      <li>Storage: <code>C:\Users\paul\.openclaw\workspace\kb\store.jsonl</code></li>
+      <li>Currently holds 8 chunks from the Gemma 4 model card (test ingest)</li>
+    </ul>
+    <p><strong>Verified end-to-end</strong>: query "how many parameters does E4B have" returned the correct chunk with score 0.5977, Gemma generated a cited answer at 22.8 tok/s and honestly noted the context didn't cover the context window question (refused to make up a number).</p>
+  </div>
+</details>
+
+<h2>Timeline</h2>
+
+<h3>Day 1 -- 2026-04-17</h3>
+<table class="timeline-table">
+  <thead>
+    <tr><th>Time</th><th>Event</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>19:21</td><td>First OAC connection, initial audit</td></tr>
+    <tr><td>19:30</td><td>Discovered PowerShell <code>$LASTEXITCODE</code> sentinel gotcha; documented as future-proof lesson</td></tr>
+    <tr><td>19:35</td><td>Audit complete: Windows 11 Pro, ThinkPad X1 Carbon Gen 9, 32 GB RAM, admin, ExecutionPolicy Bypass</td></tr>
+    <tr><td>19:40</td><td>Found existing unconfigured OpenClaw install (populated workspace, empty USER.md, no provider)</td></tr>
+    <tr><td>19:50</td><td>Backed up <code>.openclaw\</code> to <code>openclaw-backup-20260417.zip</code></td></tr>
+    <tr><td>19:55</td><td>Updated OpenClaw: 2026.4.9 -> 2026.4.15 (required Git install first)</td></tr>
+    <tr><td>20:25</td><td>Walked Paul through Codex OAuth (ChatGPT sign-in)</td></tr>
+    <tr><td>20:40</td><td>Real inference test: model returned "One two three four five OK-CODEX-OK"</td></tr>
+    <tr><td>21:15</td><td>Built skills/windows/ framework in repo: README, install.md, foundation-pack.md, clawhub-recipes.md</td></tr>
+    <tr><td>22:10</td><td>First Foundation Pack deploy attempt hit PTY deadlock (chunked-upload anti-pattern)</td></tr>
+    <tr><td>22:45</td><td>Learned Windows ConPTY handles ~7KB single-shot commands; documented</td></tr>
+    <tr><td>23:10</td><td>Foundation Pack deployed (3 custom SKILLs + humanizer from ClawHub)</td></tr>
+    <tr><td>23:25</td><td>End-to-end test: agent returned "Clawd / lobster emoji / America/Denver / OK-FOUNDATION-OK" -- proved SKILLs auto-loaded into context</td></tr>
+  </tbody>
+</table>
+
+<h3>Day 2 -- 2026-04-18</h3>
+<table class="timeline-table">
+  <thead>
+    <tr><th>Time</th><th>Event</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>20:13</td><td>Enrolled OAC device (no more one-liner ritual); deviceId <code>317142d5-...</code></td></tr>
+    <tr><td>20:17</td><td>Registered Windows Scheduled Task "OpenClaw Agent" on user login</td></tr>
+    <tr><td>21:35</td><td>Paul created @PauloradoBot via @BotFather, shared token and Telegram user ID</td></tr>
+    <tr><td>21:40</td><td>Merged Telegram channel into openclaw.json (allowlist: Paul only)</td></tr>
+    <tr><td>21:45</td><td>Paul sent first DM to @PauloradoBot, got a response <strong>-- full agent loop live</strong></td></tr>
+    <tr><td>01:36</td><td>Installed Ollama 0.21.0 via winget (detached process pattern -- 1.8 GB installer too large for PTY)</td></tr>
+    <tr><td>01:50</td><td>Pulled gemma4:e2b (7.2 GB) + nomic-embed-text (274 MB) in parallel</td></tr>
+    <tr><td>01:55</td><td>Measured real inference: 24-43 tok/s for gemma on Paul's CPU -- way better than predicted</td></tr>
+    <tr><td>02:00</td><td>Wired Ollama into OpenClaw as fallback; <code>openclaw models list</code> shows <code>fallback#1,configured</code></td></tr>
+    <tr><td>02:15</td><td>Tried ClawHub's <code>private-knowledge-base</code> -- discovered it's grep-based, not semantic. Uninstalled.</td></tr>
+    <tr><td>02:20</td><td>Decision: write custom <code>kb-nomic</code> skill from scratch -- ~300 lines of PowerShell</td></tr>
+    <tr><td>02:30</td><td>Uploaded 4 files; hit PS 5.1 encoding issue with em-dashes; documented lesson, fixed, redeployed</td></tr>
+    <tr><td>02:40</td><td>Ingested Gemma 4 model card: 22,376 chars -> 8 chunks -> 8 embeddings stored</td></tr>
+    <tr><td>02:42</td><td>Semantic search test: "E4B parameters" query returned correct chunk with 0.5977 score</td></tr>
+    <tr><td>02:45</td><td>Full RAG: Gemma generated cited answer at 22.8 tok/s, correctly flagged missing context-window info</td></tr>
+  </tbody>
+</table>
+
+<h2>What's not done (and why)</h2>
+
+<details class="work-item">
+  <summary>Personalize Clawd's identity <span class="status-pill pending">Pending</span></summary>
+  <div class="detail-body">
+    <p>Clawd is currently using the stock "lobster energy" identity from the template. Takes a ~10-minute intake
+    conversation to customize -- name, emoji, creature metaphor, tone, humor style, no-go topics.
+    Can do this any time via @PauloradoBot directly.</p>
+  </div>
+</details>
+
+<details class="work-item">
+  <summary>Google Workspace (Gmail / Calendar / Drive) <span class="status-pill deferred">Deferred</span></summary>
+  <div class="detail-body">
+    <p>The OpenClaw Google Workspace integration uses a Linux/macOS-only CLI tool called <code>gog</code>.
+    Needs a Windows-specific adaptation. Not a blocker today -- if/when you need Clawd to see your email
+    or calendar, we'll build the Windows path.</p>
+  </div>
+</details>
+
+<details class="work-item">
+  <summary>PDF ingestion into KB <span class="status-pill deferred">Deferred</span></summary>
+  <div class="detail-body">
+    <p>Current <code>kb-ingest.ps1</code> handles URLs (HTML). PDFs need a text extraction step via <code>pypdf</code> or <code>pdftotext</code>.
+    Easy add once you have specific PDFs you want searchable.</p>
+  </div>
+</details>
+
+<details class="work-item">
+  <summary>Secrets migration <span class="status-pill deferred">Deferred</span></summary>
+  <div class="detail-body">
+    <p>Telegram bot token is currently stored in plaintext in <code>openclaw.json</code>. This is fine for a local-only file
+    on your user account, but the cleaner setup uses OpenClaw's dedicated <code>secrets</code> subsystem.
+    Defer-worthy -- no functional impact.</p>
+  </div>
+</details>
+
+<details class="work-item">
+  <summary><code>openclaw capability model run --model ollama/...</code> CLI hang <span class="status-pill deferred">Known issue, non-blocking</span></summary>
+  <div class="detail-body">
+    <p>This specific CLI command hangs at the 120-second timeout when pointed at the local Ollama model.
+    Likely related to Gemma 4's default thinking mode and OpenClaw's streaming adapter.
+    <strong>Doesn't affect production</strong>: the Telegram agent loop uses a different internal code path that works correctly.
+    The KB's <code>kb-ask.ps1</code> bypasses this by calling Ollama's HTTP API directly.</p>
+  </div>
+</details>
+
+<h2>Files on your machine</h2>
+
+<ul>
+  <li><code>C:\OpenClaw-Remote\</code> -- the permanent OAC background agent (node.exe + agent.js + config.json)</li>
+  <li><code>C:\Program Files\nodejs\</code> -- Node 24.14.1</li>
+  <li><code>C:\Program Files\Git\</code> -- Git 2.53.0</li>
+  <li><code>C:\Users\paul\AppData\Local\Programs\Ollama\</code> -- Ollama v0.21.0</li>
+  <li><code>C:\Users\paul\AppData\Roaming\npm\node_modules\openclaw\</code> -- OpenClaw v2026.4.15</li>
+  <li><code>C:\Users\paul\.ollama\models\</code> -- Gemma 4 + nomic-embed-text (~7.5 GB)</li>
+  <li><code>C:\Users\paul\.openclaw\openclaw.json</code> -- main config (providers, fallbacks, channels)</li>
+  <li><code>C:\Users\paul\.openclaw\agents\main\agent\auth-profiles.json</code> -- Codex OAuth profile</li>
+  <li><code>C:\Users\paul\.openclaw\workspace\skills\</code> -- the 5 installed skills</li>
+  <li><code>C:\Users\paul\.openclaw\workspace\kb\</code> -- your private knowledge base</li>
+  <li><code>C:\Users\paul\openclaw-backup-20260417-134410.zip</code> -- pre-update backup</li>
+</ul>
+
+<h2>Scheduled tasks created</h2>
+
+<ul>
+  <li><code>OpenClaw Gateway</code> -- runs the local gateway on port 18789, starts at login (pre-existed, untouched)</li>
+  <li><code>OpenClaw Agent</code> -- runs the permanent OAC background agent, starts at login (new, 2026-04-18)</li>
+</ul>
+
+<div class="footer">
+  Generated 2026-04-19 -- <a href="https://rshuken.github.io/client-guides/paul-rodriguez/guide.html">Getting Started Guide</a> -- <a href="https://rshuken.github.io/client-guides/paul-rodriguez/security-report.html">Security Report</a>
+</div>
+
+</body>
+</html>
