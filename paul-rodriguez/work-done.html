@@ -116,6 +116,79 @@
   </p>
 </div>
 
+<h2>Memory stack upgrade (2026-04-19 evening)</h2>
+
+<div class="summary-box">
+  <h3>The gap we filled</h3>
+  <p>
+    OpenClaw has a sophisticated 3-tier memory architecture (short-term recall / REM reflections / long-term MEMORY.md)
+    but <strong>none of the consolidation was running</strong>. P's memory was effectively a rolling window that aged out.
+    Evening of 2026-04-19 we fixed this: installed Lossless Claw, ran initial memory promotion + REM backfill,
+    and set up a nightly Scheduled Task so the system self-maintains forever.
+  </p>
+</div>
+
+<details class="work-item" open>
+  <summary><strong>Lossless Claw (LCM) plugin</strong> -- full conversation preservation <span class="status-pill ok">Installed v0.9.2</span></summary>
+  <div class="detail-body">
+    <p>Martian Engineering's <code>@martian-engineering/lossless-claw</code> installed and wired as P's context engine.
+    Every message from here forward gets persisted to a local SQLite DB, with older chunks DAG-summarized into higher-level nodes
+    so nothing is lost. P can <code>lcm_grep</code> and <code>lcm_expand</code> to recall specific details from weeks or months ago.</p>
+    <ul>
+      <li>Location: <code>C:\Users\paul\.openclaw\extensions\lossless-claw\</code></li>
+      <li>Config: <code>plugins.slots.contextEngine = "lossless-claw"</code></li>
+      <li>Install gotcha: first install failed on Windows file-lock during final rename (gateway held stage dir open); resolved by hard-killing gateway, manual rename, in-place PS config edit</li>
+    </ul>
+  </div>
+</details>
+
+<details class="work-item">
+  <summary><strong>MEMORY.md</strong> (long-term durable memory) <span class="status-pill ok">Created, 2 entries</span></summary>
+  <div class="detail-body">
+    <p>Ran <code>openclaw memory promote --apply --limit 20 --min-score 0.6</code> which pulled short-term entries above
+    the 0.6 relevance threshold into durable long-term storage. First two entries promoted:</p>
+    <ul>
+      <li><strong>Supabase + Vercel setup</strong> (score 0.753): pooler URI, DATABASE_URL env var, post-deploy polish</li>
+      <li><strong>Bootstrap + agent identity</strong> (score 0.752): "Assistant name set to P", "Preferred vibe: sharp coworker", RVFTO repo creation</li>
+    </ul>
+    <p>Location: <code>C:\Users\paul\.openclaw\workspace\MEMORY.md</code> (3,089 bytes)</p>
+  </div>
+</details>
+
+<details class="work-item">
+  <summary><strong>DREAMS.md</strong> (REM reflections) <span class="status-pill ok">Created, 2 entries backfilled</span></summary>
+  <div class="detail-body">
+    <p>Ran <code>openclaw memory rem-backfill --path ./memory --stage-short-term</code> which generated
+    reflection entries from Paul's historical daily memory files. Populated <code>DREAMS.md</code> (616 bytes)
+    and staged grounded candidate truths for future promotion cycles.</p>
+  </div>
+</details>
+
+<details class="work-item">
+  <summary><strong>Auto-memory scheduled task</strong> -- nightly self-maintenance <span class="status-pill ok">Scheduled + test-run verified</span></summary>
+  <div class="detail-body">
+    <p>Installed <code>C:\OpenClaw-Remote\scripts\auto-memory.ps1</code> which runs three commands:</p>
+    <ul>
+      <li><code>openclaw memory promote --apply --limit 20 --min-score 0.6</code></li>
+      <li><code>openclaw memory rem-backfill --path ./memory --stage-short-term</code></li>
+      <li><code>openclaw memory status --json</code> (health report)</li>
+    </ul>
+    <p>Registered as Windows Scheduled Task <code>OpenClaw Auto-Memory</code>, triggers daily at 3:00 AM local.
+    Log appended to <code>workspace/logs/auto-memory.log</code> for audit. Test-run verified: first-run log entry present, promotions correct.</p>
+    <p>Reusable pattern committed to openagent-connect repo at <code>skills/windows/custom-skills/auto-memory/</code> for future Windows clients.</p>
+  </div>
+</details>
+
+<details class="work-item">
+  <summary><strong>Config self-heal discovered</strong> (bonus finding) <span class="status-pill ok">Defensive feature</span></summary>
+  <div class="detail-body">
+    <p>During the LCM install, I accidentally wrote a zero-byte <code>openclaw.json</code>. OpenClaw's gateway
+    config-health layer detected the corruption (<code>size-drop-vs-last-good: 1949->0</code>),
+    moved the broken file aside to <code>openclaw.json.clobbered.&lt;timestamp&gt;</code>, and auto-restored from the last-known-good backup
+    within 30 seconds. This is a real defensive feature that gives us more room to make in-place config edits without paranoid backups.</p>
+  </div>
+</details>
+
 <h2>What Paul has built with P (2026-04-18 / 19)</h2>
 
 <details class="work-item" open>

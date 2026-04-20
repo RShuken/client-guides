@@ -106,12 +106,12 @@
   <div class="hero-inner">
     <div class="label">Security Report Card</div>
     <h1>P's Security Posture</h1>
-    <p>Paul Rodriguez / WorkerBee303 -- assessed 2026-04-18</p>
+    <p>Paul Rodriguez / WorkerBee303 -- assessed 2026-04-18, updated 2026-04-19</p>
     <div class="score-card">
-      <div class="score-number">87</div>
+      <div class="score-number">90</div>
       <div class="score-label">
         <div class="grade">A -- Healthy</div>
-        <div class="desc">12 checks passed, 3 items deferred, 0 red flags</div>
+        <div class="desc">14 checks passed, 3 trade-offs, 0 red flags</div>
       </div>
     </div>
   </div>
@@ -120,7 +120,7 @@
 <section>
   <div class="container">
     <span class="section-label">What Passed</span>
-    <h2 class="section-title">12 Healthy Checks</h2>
+    <h2 class="section-title">14 Healthy Checks</h2>
     <p class="section-subtitle">
       The baseline security posture is solid. These are the checks that came back clean on a first audit pass.
     </p>
@@ -161,6 +161,14 @@
       <div class="check ok">
         <h4>Local embeddings -- no vector leaks</h4>
         <p>Your knowledge base is embedded locally by nomic-embed-text. Search queries are embedded locally. The full vector index never leaves the machine. Cosine similarity math runs in PowerShell, in-process.</p>
+      </div>
+      <div class="check ok">
+        <h4>Lossless Claw conversation history is local</h4>
+        <p>The LCM plugin stores every P conversation in a SQLite DB under <code>C:\Users\paul\.openclaw\extensions\lossless-claw\</code>. DAG summarization happens locally. Full conversation history + summaries never leave the machine unless you ask P to quote from them in a cloud-brain call.</p>
+      </div>
+      <div class="check ok">
+        <h4>Config self-heal on corruption</h4>
+        <p>OpenClaw's gateway config-health layer watches <code>openclaw.json</code> for suspicious changes (sudden size drops, missing required keys, gateway mode shifts). On detection, it moves the bad file to <code>openclaw.json.clobbered.&lt;timestamp&gt;</code> and auto-restores from last-known-good backup within ~30 seconds. Verified live on 2026-04-19.</p>
       </div>
       <div class="check ok">
         <h4>Enrolled device on HTTPS only</h4>

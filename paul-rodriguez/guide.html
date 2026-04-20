@@ -326,6 +326,7 @@
       <li><a href="#rvfto">RVFTO</a></li>
       <li><a href="#getting-started">Get Started</a></li>
       <li><a href="#stack">The Stack</a></li>
+      <li><a href="#memory">Memory</a></li>
       <li><a href="#knowledge">Knowledge Base</a></li>
       <li><a href="#privacy">Privacy</a></li>
       <li><a href="#capabilities">Capabilities</a></li>
@@ -574,6 +575,77 @@
   </div>
 </section>
 
+<!-- -- Memory -- -->
+<section id="memory">
+  <div class="container">
+    <span class="section-label">How P Gets Smarter</span>
+    <h2 class="section-title">Five layers of memory, one durable mind</h2>
+    <p class="section-subtitle">
+      P doesn't forget between conversations. Every night at 3 AM, its memory system self-consolidates:
+      short-term notes get promoted to long-term, reflections get generated, and full conversation history stays preserved.
+      This is what makes P genuinely get smarter each day instead of plateauing.
+    </p>
+
+    <div class="stack-layers">
+      <div class="stack-layer kb">
+        <div class="layer-icon">1</div>
+        <div>
+          <h4>Daily memory files (<code style="background:#fef3c7;color:#92400e;padding:2px 7px;border-radius:5px;font-family:'SF Mono',monospace;font-size:0.85rem;">workspace/memory/YYYY-MM-DD.md</code>)</h4>
+          <p>P writes a structured bullet-list summary of every active session -- decisions, commits, shipped features, open threads. Human-readable, greppable, yours to edit.</p>
+        </div>
+        <span class="stack-tag kb">Daily</span>
+      </div>
+      <div class="stack-layer local">
+        <div class="layer-icon">2</div>
+        <div>
+          <h4>Short-term recall (<code style="background:#fef3c7;color:#92400e;padding:2px 7px;border-radius:5px;font-family:'SF Mono',monospace;font-size:0.85rem;">.dreams/short-term-recall.json</code>)</h4>
+          <p>P automatically chunks daily memory files into entries, tags them with semantic concepts, and scores them by recall frequency. Every conversation reaches into this store to pull relevant context.</p>
+        </div>
+        <span class="stack-tag local">Recall</span>
+      </div>
+      <div class="stack-layer local">
+        <div class="layer-icon">3</div>
+        <div>
+          <h4>Long-term memory (<code style="background:#fef3c7;color:#92400e;padding:2px 7px;border-radius:5px;font-family:'SF Mono',monospace;font-size:0.85rem;">MEMORY.md</code>)</h4>
+          <p>High-scoring entries (≥ 0.6) get promoted nightly from short-term into a durable MEMORY.md. These never age out. This is P's long-term knowledge about you and your work.</p>
+        </div>
+        <span class="stack-tag local">Durable</span>
+      </div>
+      <div class="stack-layer cloud">
+        <div class="layer-icon">4</div>
+        <div>
+          <h4>REM reflections (<code style="background:#fef3c7;color:#92400e;padding:2px 7px;border-radius:5px;font-family:'SF Mono',monospace;font-size:0.85rem;">DREAMS.md</code>)</h4>
+          <p>Overnight consolidation pass: P generates grounded candidate truths from your historical memory, like a dream cycle. These surface as "P realized..." observations in future sessions.</p>
+        </div>
+        <span class="stack-tag cloud">Reflection</span>
+      </div>
+      <div class="stack-layer kb">
+        <div class="layer-icon">5</div>
+        <div>
+          <h4>Lossless Claw (full conversation preservation)</h4>
+          <p>Every message P has ever sent or received is persisted to a local SQLite DB. Older chunks get DAG-summarized into higher-level nodes, but nothing is lost. P can <code style="background:#fef3c7;color:#92400e;padding:2px 7px;border-radius:5px;font-family:'SF Mono',monospace;font-size:0.85rem;">lcm_grep</code> and <code style="background:#fef3c7;color:#92400e;padding:2px 7px;border-radius:5px;font-family:'SF Mono',monospace;font-size:0.85rem;">lcm_expand</code> to recall specific details from months ago.</p>
+        </div>
+        <span class="stack-tag kb">Lossless</span>
+      </div>
+    </div>
+
+    <div class="quick-start">
+      <div class="qs-icon">3am</div>
+      <div class="qs-content">
+        <h3>The nightly auto-memory job (Windows Scheduled Task)</h3>
+        <p>
+          A scheduled task called <code style="background:#fbbf24;color:#1c1917;padding:2px 7px;border-radius:5px;font-family:'SF Mono',monospace;font-size:0.85rem;">OpenClaw Auto-Memory</code>
+          runs at 3:00 AM every day. It promotes fresh short-term entries into long-term MEMORY.md,
+          triggers a REM backfill to generate reflections, and writes a health report to
+          <code style="background:#fbbf24;color:#1c1917;padding:2px 7px;border-radius:5px;font-family:'SF Mono',monospace;font-size:0.85rem;">workspace/logs/auto-memory.log</code>.
+          You don't have to do anything -- P genuinely consolidates what it learned each day into durable memory,
+          automatically, forever.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- -- Privacy -- -->
 <section id="privacy">
   <div class="container">
@@ -591,7 +663,8 @@
           <li>Your knowledge base -- everything you've saved or ingested</li>
           <li>All embeddings (the numeric representations of your content)</li>
           <li>The local Gemma 4 model and its inference</li>
-          <li>Conversation memory and context from past chats</li>
+          <li>Daily memory files, short-term recall, MEMORY.md, DREAMS.md</li>
+          <li>Lossless Claw's full SQLite conversation history + DAG summaries</li>
           <li>Logs of what P did (for your own audit)</li>
           <li>Any file or workspace content P touches</li>
         </ul>
@@ -744,6 +817,8 @@
       <div class="spec-item"><div class="spec-label">Primary model</div><div class="spec-value">openai-codex/gpt-5.4</div></div>
       <div class="spec-item"><div class="spec-label">Fallback model</div><div class="spec-value">gemma4:e2b (local)</div></div>
       <div class="spec-item"><div class="spec-label">Embedder</div><div class="spec-value">nomic-embed-text</div></div>
+      <div class="spec-item"><div class="spec-label">Context engine</div><div class="spec-value">lossless-claw v0.9.2</div></div>
+      <div class="spec-item"><div class="spec-label">Auto-memory</div><div class="spec-value">Daily 3 AM MT</div></div>
       <div class="spec-item"><div class="spec-label">Messaging</div><div class="spec-value">@PauloradoBot</div></div>
       <div class="spec-item"><div class="spec-label">Auth</div><div class="spec-value">ChatGPT OAuth</div></div>
       <div class="spec-item"><div class="spec-label">Background service</div><div class="spec-value">Win Task Scheduler</div></div>
